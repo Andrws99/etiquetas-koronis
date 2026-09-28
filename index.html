@@ -1,0 +1,1707 @@
+<title>Generador de Etiquetas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Archivo+Narrow:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#EEF1F0;
+  --surface:#FFFFFF;
+  --surface-2:#F5F7F6;
+  --line:#D3DAD8;
+  --line-strong:#B4BFBC;
+  --ink:#141D1B;
+  --ink-2:#4A5754;
+  --ink-3:#77837F;
+  --accent:#0E6B58;
+  --accent-soft:#E2EFEB;
+  --accent-ink:#0A4C3E;
+  --warn:#96540A;
+  --warn-soft:#FBEEDC;
+  --bad:#9C2A1C;
+  --bad-soft:#FAE8E5;
+  --good:#0E6B58;
+  --good-soft:#E2EFEB;
+  --shadow:0 1px 2px rgba(20,29,27,.06), 0 8px 24px -12px rgba(20,29,27,.18);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0F1514;
+    --surface:#18201F;
+    --surface-2:#1F2827;
+    --line:#2C3836;
+    --line-strong:#3E4C49;
+    --ink:#E6ECEA;
+    --ink-2:#AAB7B4;
+    --ink-3:#7E8B88;
+    --accent:#45B99E;
+    --accent-soft:#12302A;
+    --accent-ink:#8ED8C6;
+    --warn:#E0A75B;
+    --warn-soft:#33240F;
+    --bad:#E68878;
+    --bad-soft:#341A16;
+    --good:#45B99E;
+    --good-soft:#12302A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0F1514;
+  --surface:#18201F;
+  --surface-2:#1F2827;
+  --line:#2C3836;
+  --line-strong:#3E4C49;
+  --ink:#E6ECEA;
+  --ink-2:#AAB7B4;
+  --ink-3:#7E8B88;
+  --accent:#45B99E;
+  --accent-soft:#12302A;
+  --accent-ink:#8ED8C6;
+  --warn:#E0A75B;
+  --warn-soft:#33240F;
+  --bad:#E68878;
+  --bad-soft:#341A16;
+  --good:#45B99E;
+  --good-soft:#12302A;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:20px 56px}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:30px;height:30px;border-radius:7px;background:var(--accent);display:grid;place-items:center;flex:none}
+.brand-mark svg{display:block}
+h1{
+  font-family:"Archivo",sans-serif;font-weight:700;font-size:19px;letter-spacing:-.01em;
+  margin:0;line-height:1.15;
+}
+.brand p{margin:1px 0 0;font-size:12.5px;color:var(--ink-3)}
+.demo-flag{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--warn);background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);
+  padding:4px 9px;border-radius:999px;white-space:nowrap
+}
+
+/* ---------- stepper ---------- */
+.stepper{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:22px
+}
+.stepper button{
+  appearance:none;border:0;background:var(--surface);color:var(--ink-3);
+  font-family:"Archivo",sans-serif;font-weight:600;font-size:12.5px;
+  padding:10px 8px 11px;display:flex;align-items:center;gap:8px;justify-content:center;
+  cursor:pointer;transition:background .15s,color .15s;text-align:left;min-width:0
+}
+.stepper button:disabled{cursor:not-allowed;opacity:.55}
+.stepper button .n{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;width:19px;height:19px;border-radius:50%;
+  display:grid;place-items:center;background:var(--surface-2);color:var(--ink-3);flex:none;
+  border:1px solid var(--line)
+}
+.stepper button .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stepper button[aria-current="true"]{background:var(--accent-soft);color:var(--accent-ink)}
+.stepper button[aria-current="true"] .n{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stepper button.done{color:var(--ink-2)}
+.stepper button.done .n{background:var(--good-soft);color:var(--good);border-color:color-mix(in srgb,var(--good) 35%,transparent)}
+@media (max-width:640px){
+  .stepper{grid-template-columns:repeat(4,1fr)}
+  .stepper button .t{display:none}
+  .stepper button{padding:11px 4px}
+}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+@media (max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.panel-head{padding:14px 18px 12px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-family:"Archivo",sans-serif;font-size:16px;font-weight:600;margin:0;letter-spacing:-.005em}
+.panel-head p{margin:3px 0 0;font-size:13px;color:var(--ink-3)}
+.panel-body{padding:18px}
+
+/* ---------- form ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.span{grid-column:1/-1}
+label{font-size:12px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;display:flex;gap:6px;align-items:baseline}
+label .req{color:var(--accent);font-family:"IBM Plex Mono",monospace;font-size:11px}
+label .opt{color:var(--ink-3);font-weight:400;font-size:11px}
+input,select,textarea{
+  font-family:inherit;font-size:14px;color:var(--ink);background:var(--surface-2);
+  border:1px solid var(--line-strong);border-radius:7px;padding:8px 10px;width:100%;
+  transition:border-color .15s,box-shadow .15s
+}
+textarea{resize:vertical;min-height:62px;line-height:1.35}
+input.mono,textarea.mono{font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)
+}
+.hint{font-size:11.5px;color:var(--ink-3);font-family:"IBM Plex Mono",monospace}
+.hint.err{color:var(--bad)}
+.hint.ok{color:var(--good)}
+.row-inline{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.row-inline .field{flex:1 1 140px}
+
+/* ---------- selector de artículo ---------- */
+.src{
+  border:1px solid var(--line-strong);border-radius:9px;background:var(--surface-2);
+  padding:13px;margin-bottom:18px;display:flex;flex-direction:column;gap:9px
+}
+.src-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.src-nm{font-family:"Archivo",sans-serif;font-size:13px;font-weight:600}
+.src-pill{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);border:1px solid var(--line-strong);border-radius:999px;padding:2px 8px
+}
+.src input{background:var(--surface)}
+.results{display:flex;flex-direction:column;gap:3px}
+.results-empty{margin:0;font-size:12px;color:var(--ink-3);line-height:1.45;display:flex;gap:7px;align-items:center}
+.results-empty.err{color:var(--bad)}
+.spin{
+  width:11px;height:11px;flex:none;border-radius:50%;
+  border:2px solid color-mix(in srgb,var(--accent) 28%,transparent);border-top-color:var(--accent);
+  animation:sp .7s linear infinite
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:2s}}
+
+/* ---------- panel de conexión ---------- */
+.conn{
+  margin-top:22px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);
+  box-shadow:var(--shadow);overflow:hidden
+}
+.conn>summary{
+  cursor:pointer;padding:13px 18px;font-family:"Archivo",sans-serif;font-weight:600;font-size:14px;
+  display:flex;align-items:center;gap:9px;list-style:none
+}
+.conn>summary::-webkit-details-marker{display:none}
+.conn>summary::before{
+  content:"";width:0;height:0;border-left:5px solid var(--ink-3);
+  border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .15s
+}
+.conn[open]>summary::before{transform:rotate(90deg)}
+.conn>summary .estado{
+  margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.05em;
+  text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  background:var(--warn-soft);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)
+}
+.conn>summary .estado.on{background:var(--good-soft);color:var(--good);border-color:color-mix(in srgb,var(--good) 35%,transparent)}
+.conn-body{padding:0 18px 18px;border-top:1px solid var(--line);padding-top:16px}
+.conn-body p{margin:0 0 12px;font-size:13px;color:var(--ink-2);line-height:1.55;max-width:70ch}
+.conn-body h4{
+  font-family:"Archivo",sans-serif;font-size:12px;font-weight:600;margin:18px 0 8px;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)
+}
+.res{
+  appearance:none;cursor:pointer;text-align:left;font:inherit;color:inherit;
+  background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 10px;
+  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;min-width:0
+}
+.res:hover{border-color:var(--accent);background:var(--accent-soft)}
+.res:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.res-ref{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;color:var(--accent-ink)}
+.res-desc{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.res-code{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3)}
+@media (max-width:540px){
+  .res{grid-template-columns:auto 1fr}
+  .res-code{grid-column:1/-1;font-size:10.5px}
+}
+.chosen{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--accent);border-radius:7px;padding:9px 11px
+}
+.chosen-ref{
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:500;color:var(--accent-ink);
+  margin-right:8px
+}
+.chosen-desc{font-size:13px}
+.chosen-acts{display:flex;gap:6px}
+.src-note{margin:0;font-size:11.5px;color:var(--ink-3);line-height:1.45}
+.src-note.warn{color:var(--warn)}
+.lock{
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.06em;
+  background:var(--accent-soft);color:var(--accent-ink);border-radius:3px;padding:1px 4px;
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)
+}
+input[readonly],textarea[readonly],select:disabled{
+  background:color-mix(in srgb,var(--ink) 4%,transparent);color:var(--ink-2);cursor:default;opacity:1
+}
+
+/* ---------- imágenes ---------- */
+.vh{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.imgsec{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.imgsec h3{
+  font-family:"Archivo",sans-serif;font-size:13px;font-weight:600;margin:0 0 12px;
+  display:flex;gap:8px;align-items:baseline;flex-wrap:wrap
+}
+.imgsec h3 span{font-family:inherit;font-weight:400;font-size:12px;color:var(--ink-3)}
+.logowrap{max-width:420px}
+.slot{display:flex;flex-direction:column;gap:7px;min-width:0}
+.slot-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:28px}
+.slot-nm{font-size:12px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
+.drop{
+  display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;text-align:center;
+  border:1.5px dashed var(--line-strong);border-radius:8px;padding:16px 12px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--surface-2);min-height:78px;
+  transition:border-color .15s,background .15s
+}
+.drop:hover{border-color:var(--accent);background:var(--accent-soft)}
+.drop em{font-style:normal;font-weight:400;font-size:11px;color:var(--ink-3);max-width:24ch;line-height:1.35}
+input[type="file"]:focus-visible + .drop,.drop:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.thumb{
+  border:1px solid var(--line-strong);border-radius:8px;background:var(--surface-2);
+  height:78px;display:grid;place-items:center;padding:7px;overflow:hidden
+}
+.thumb img{max-height:64px;max-width:100%;width:auto;object-fit:contain}
+.mini{font-size:11px;color:var(--ink-3);font-weight:500;display:block}
+.mini b{color:var(--ink-2);font-family:"IBM Plex Mono",monospace}
+input[type="range"]{padding:0;height:22px;background:transparent;border:0;accent-color:var(--accent)}
+input[type="range"]:focus{box-shadow:none;outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.ditherbar{
+  display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-2)
+}
+.ditherbar input{width:auto;accent-color:var(--accent);margin:0}
+.ditherbar label{font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer}
+
+/* ---------- size cards ---------- */
+.sizes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:700px){.sizes{grid-template-columns:1fr}}
+.size{
+  appearance:none;text-align:left;cursor:pointer;background:var(--surface-2);
+  border:1px solid var(--line-strong);border-radius:9px;padding:13px;
+  display:flex;gap:13px;align-items:center;transition:border-color .15s,background .15s;color:inherit;font:inherit;
+  min-width:0
+}
+.size>span:last-child{min-width:0}
+.size:hover{border-color:var(--line-strong);background:var(--surface)}
+.size:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.size[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.size .shape{
+  flex:none;width:58px;height:58px;display:grid;place-items:center
+}
+.size .shape i{
+  display:block;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:2px;
+  max-width:100%;max-height:100%
+}
+.size[aria-pressed="true"] .shape i{border-color:var(--accent)}
+.size .dims{font-family:"IBM Plex Mono",monospace;font-size:13.5px;font-weight:500;letter-spacing:-.01em}
+.size .nm{font-family:"Archivo",sans-serif;font-size:12px;font-weight:600;color:var(--ink-2);margin-top:1px}
+.size .note{font-size:11px;color:var(--ink-3);line-height:1.3;margin-top:3px}
+.size .dims{display:block;font-family:"Archivo",sans-serif;font-size:14px;font-weight:600;letter-spacing:0}
+.size .nm{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:400;color:var(--ink-3);margin-top:2px}
+
+/* ---------- rollo cargado ---------- */
+.rollo{
+  margin-top:14px;padding:12px 13px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface-2);display:flex;gap:11px;align-items:center;flex-wrap:wrap
+}
+.rollo-lbl{font-size:12px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
+.rollo-chips{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.chip{
+  appearance:none;cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:12px;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;
+  padding:5px 12px;color:var(--ink-2);transition:border-color .15s,background .15s
+}
+.chip:hover{border-color:var(--ink-3)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (max-width:480px){.rollo-chips{margin-left:0;width:100%}}
+
+/* ---------- preview ---------- */
+.previewCol{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px)}
+@media (max-width:860px){.previewCol{position:static}}
+.stage{
+  background:
+    linear-gradient(45deg,color-mix(in srgb,var(--ink) 4%,transparent) 25%,transparent 25% 75%,color-mix(in srgb,var(--ink) 4%,transparent) 75%) 0 0/14px 14px,
+    linear-gradient(45deg,color-mix(in srgb,var(--ink) 4%,transparent) 25%,transparent 25% 75%,color-mix(in srgb,var(--ink) 4%,transparent) 75%) 7px 7px/14px 14px,
+    var(--surface-2);
+  border-bottom:1px solid var(--line);
+  padding:20px 14px;display:grid;place-items:center;min-height:180px
+}
+#labelBox{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);max-width:100%;position:relative;touch-action:none}
+#labelBox svg{display:block}
+#hits{position:absolute;inset:0}
+.hit{
+  position:absolute;left:0;right:0;appearance:none;background:transparent;padding:0;
+  border:1px solid transparent;border-radius:3px;cursor:grab;font:inherit;color:inherit;
+  transition:background .12s,border-color .12s
+}
+.hit:hover,.hit:focus-visible{
+  background:color-mix(in srgb,var(--accent) 13%,transparent);
+  border-color:color-mix(in srgb,var(--accent) 55%,transparent);outline:none
+}
+.hit-tag{
+  position:absolute;left:3px;top:2px;opacity:0;pointer-events:none;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.04em;line-height:1;
+  background:var(--accent);color:#fff;padding:2px 4px;border-radius:3px;white-space:nowrap;
+  transition:opacity .12s
+}
+.hit:hover .hit-tag,.hit:focus-visible .hit-tag,.hit.dragging .hit-tag{opacity:1}
+.hit.dragging{
+  cursor:grabbing;z-index:3;background:color-mix(in srgb,var(--accent) 20%,transparent);
+  border-color:var(--accent);border-style:dashed
+}
+body.dragging-on{user-select:none}
+#dropline{
+  position:absolute;left:-2px;right:-2px;height:2px;background:var(--accent);border-radius:2px;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 28%,transparent);pointer-events:none;z-index:4
+}
+.draghint{
+  display:flex;align-items:center;gap:7px;padding:8px 14px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink-3);flex-wrap:wrap
+}
+.draghint svg{flex:none;color:var(--ink-3)}
+.draghint button{margin-left:auto}
+.stage-meta{
+  display:flex;justify-content:space-between;gap:10px;padding:9px 14px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);flex-wrap:wrap
+}
+.stage-meta b{color:var(--ink-2);font-weight:500}
+
+/* ---------- alerts ---------- */
+.alert{
+  display:flex;gap:11px;padding:12px 14px;border-radius:8px;font-size:13.5px;line-height:1.45;
+  border:1px solid;align-items:flex-start
+}
+.alert .ic{flex:none;width:18px;height:18px;margin-top:1px}
+.alert h3{font-family:"Archivo",sans-serif;font-size:13.5px;font-weight:600;margin:0 0 2px}
+.alert p{margin:0;color:inherit;opacity:.92}
+.alert.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 32%,transparent);color:var(--warn)}
+.alert.bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 32%,transparent);color:var(--bad)}
+.alert.good{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 32%,transparent);color:var(--good)}
+.alert.info{background:var(--surface-2);border-color:var(--line-strong);color:var(--ink-2)}
+.alerts{display:flex;flex-direction:column;gap:9px}
+.fixes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* ---------- buttons ---------- */
+.btn{
+  appearance:none;cursor:pointer;font-family:"Archivo",sans-serif;font-weight:600;font-size:13.5px;
+  border-radius:7px;padding:9px 16px;border:1px solid transparent;transition:background .15s,border-color .15s;
+  display:inline-flex;align-items:center;gap:7px
+}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:color-mix(in srgb,var(--accent) 86%,#000)}
+.btn-primary:disabled{background:var(--line-strong);color:var(--surface);cursor:not-allowed}
+.btn-ghost{background:transparent;border-color:var(--line-strong);color:var(--ink-2)}
+.btn-ghost:hover{border-color:var(--ink-3);color:var(--ink)}
+.btn-small{padding:6px 11px;font-size:12.5px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;align-items:center;flex-wrap:wrap}
+.nav .spacer{flex:1}
+
+/* ---------- step 4 ---------- */
+.summary{
+  border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:18px
+}
+.summary div{display:flex;justify-content:space-between;gap:14px;padding:9px 13px;font-size:13.5px;border-bottom:1px solid var(--line)}
+.summary div:last-child{border-bottom:0}
+.summary div:nth-child(odd){background:var(--surface-2)}
+.summary dt{color:var(--ink-3);font-size:12px;letter-spacing:.02em;font-weight:600;margin:0}
+.summary dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;text-align:right;word-break:break-word}
+.routes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.routes{grid-template-columns:1fr}}
+.route{
+  appearance:none;text-align:left;cursor:pointer;color:inherit;font:inherit;
+  background:var(--surface-2);border:1px solid var(--line-strong);border-radius:9px;padding:14px
+}
+.route:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.route[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.route h3{font-family:"Archivo",sans-serif;font-size:14px;font-weight:600;margin:0 0 4px;display:flex;align-items:center;gap:7px}
+.route p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.route .tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.codewrap{margin-top:16px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.codewrap header{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;
+  background:var(--surface-2);border-bottom:1px solid var(--line);
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em
+}
+pre{
+  margin:0;padding:12px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;
+  background:var(--surface);color:var(--ink-2);max-height:280px;overflow-y:auto
+}
+.foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.foot code{font-family:"IBM Plex Mono",monospace;background:var(--surface-2);padding:1px 4px;border-radius:3px;font-size:11.5px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+          <rect x="1" y="3" width="1.6" height="11" fill="#fff"/><rect x="4" y="3" width="1" height="11" fill="#fff"/>
+          <rect x="6.6" y="3" width="2.2" height="11" fill="#fff"/><rect x="10.2" y="3" width="1" height="11" fill="#fff"/>
+          <rect x="12.4" y="3" width="1.6" height="11" fill="#fff"/><rect x="15.2" y="3" width="1" height="11" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Generador de Etiquetas</h1>
+        <p>Rellena, elige tamaño, comprueba y saca la etiqueta</p>
+      </div>
+    </div>
+    <span class="demo-flag">Prototipo · datos de ejemplo</span>
+  </div>
+
+  <nav class="stepper" id="stepper" aria-label="Pasos"></nav>
+
+  <div class="cols">
+    <main id="main"></main>
+    <aside class="previewCol">
+      <div class="panel">
+        <div class="stage"><div id="labelBox"></div></div>
+        <div class="stage-meta">
+          <span id="metaSize">—</span>
+          <span id="metaScale">—</span>
+        </div>
+        <div class="draghint">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.5 10 4H6l2-2.5ZM8 14.5 6 12h4l-2 2.5ZM1.5 8 4 6v4L1.5 8ZM14.5 8 12 10V6l2.5 2Z" fill="currentColor"/>
+            <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
+          </svg>
+          Arrastra los campos para cambiar el orden
+          <button class="btn btn-ghost btn-small" data-act="reset-order" id="resetOrder" hidden>Orden original</button>
+        </div>
+        <div class="ditherbar" id="ditherbar" hidden>
+          <input type="checkbox" id="f-dither" checked>
+          <label for="f-dither">Ver como lo imprime la térmica (1 bit)</label>
+        </div>
+      </div>
+      <div class="foot">
+        Vista previa a escala. El módulo de código de barras se calcula en milímetros reales,
+        así que lo que ves es lo que sale por la impresora.
+      </div>
+    </aside>
+  </div>
+
+  <details class="conn" id="conn">
+    <summary>Conexión con el ERP <span class="estado" id="connEstado">sin conectar</span></summary>
+    <div class="conn-body">
+      <p>Toda la aplicación pide los artículos a un solo objeto. Cambia el origen aquí, o
+      directamente en la constante <code>ORIGEN</code> del código, y el resto sigue igual.</p>
+
+      <div class="grid2">
+        <div class="field">
+          <label for="c-modo">Origen de datos</label>
+          <select id="c-modo" data-conn="modo">
+            <option value="demo">Lista local (sin backend)</option>
+            <option value="api">API del ERP</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="c-base">URL base del backend</label>
+          <input id="c-base" class="mono" data-conn="base" placeholder="https://etiquetas.tuservidor.com/api" value="">
+        </div>
+        <div class="field span">
+          <label for="c-token">Token Bearer <span class="opt">opcional</span></label>
+          <input id="c-token" class="mono" data-conn="token" placeholder="se manda en la cabecera Authorization" value="">
+        </div>
+      </div>
+
+      <h4>Rutas que tiene que servir el backend</h4>
+      <div class="codewrap">
+        <pre>GET  {base}/articulos?q=&lt;texto&gt;&amp;limit=8   → [ {...}, {...} ]
+GET  {base}/articulos/&lt;referencia&gt;        → { ... }</pre>
+      </div>
+
+      <h4>Forma de cada artículo</h4>
+      <div class="codewrap">
+        <pre>{
+  "ref":   "500600",            // referencia del maestro   OBLIGATORIO
+  "desc":  "PLUMERO EXTENSIBLE",// descripción              OBLIGATORIO
+  "code":  "8436025811529",     // EAN-13 o GTIN-14         OBLIGATORIO
+  "sym":   "ean13",             // ean13 | itf14 | code128  opcional
+  "marca": "newmop",            //                          opcional
+  "uds":   "12",                // unidades por caja        opcional
+  "extra": "(INCLUYE ASA)"      // texto fijo del artículo  opcional
+}</pre>
+      </div>
+      <p style="margin-top:12px">Si las columnas del ERP se llaman de otra forma, no hay que tocar nada más:
+      se añaden los nombres reales a <code>MAPA_CAMPOS</code> y se traducen solos. Si el ERP no manda
+      <code>sym</code>, se deduce por la longitud del código.</p>
+
+      <h4>Lo que la plataforma nunca escribe</h4>
+      <p style="margin-bottom:0">El ERP se consulta en solo lectura. La plantilla, el orden de los campos, el tamaño,
+      el logo y la imagen viven en la plataforma enlazados por referencia. El lote y las copias
+      son de cada impresión y no vuelven al maestro.</p>
+    </div>
+  </details>
+</div>
+
+<script>
+/* ============================================================
+   DATOS
+   ============================================================ */
+/* Medidas físicas del rollo, en milímetros (ancho × alto). */
+const SIZES = [
+  {id:"10x30",   w:10,  h:30 },
+  {id:"20x30",   w:20,  h:30 },
+  {id:"30x30",   w:30,  h:30 },
+  {id:"30x40",   w:30,  h:40 },
+  {id:"60x80",   w:60,  h:80 },
+  {id:"100x150", w:100, h:150}
+];
+
+/* Plantillas. El operario elige entre estas tres, no entre seis medidas.
+   Una misma plantilla sirve para varios rollos: el motor la recompone sola. */
+const GRUPOS = [
+  {id:"pequena",  nm:"Pequeña",  note:"Unidad pequeña. Descripción corta y código.",
+   sizes:["10x30","20x30","30x30"]},
+  {id:"estandar", nm:"Estándar", note:"La de uso diario en unidad.",
+   sizes:["30x40"]},
+  {id:"caja",     nm:"Caja",     note:"Agrupación: unidades por caja e ITF-14.",
+   sizes:["60x80","100x150"]}
+];
+const grupoDe = id => GRUPOS.find(g => g.sizes.includes(id)) || GRUPOS[0];
+
+const STEPS = ["Rellenar datos","Elegir tamaño","Previsualizar","Imprimir"];
+
+const st = {
+  step: 0,
+  marca: "newmop",
+  ref: "500598",
+  desc: "PLUMERO AVESTRUZ MAXI EXTENSIBLE",
+  uds: "72",
+  lote: "1123B9110526",
+  extra: "",
+  code: "8436025811529",
+  sym: "ean13",
+  copies: 1,
+  sizeId: "60x80",
+  landscape: false,
+  fitScale: 1,
+  route: null,
+  q: "",                // búsqueda en el catálogo
+  resultados: [],       // lo último que devolvió el origen de datos
+  buscando: false,
+  errorBusqueda: null,
+  articulo: null,       // artículo traído del ERP, o null si se rellena a mano
+  locked: true,         // los campos del ERP no se tocan salvo desbloqueo
+  order: ["logo","marca","ref","desc","meta","extra","barcode"],
+  logo: null,          // {src, img, mode:'line'|'photo'}
+  dither: true         // ver la imagen como la imprime la térmica (1 bit)
+};
+
+/* ============================================================================
+   ORIGEN DE DATOS — único punto que hay que tocar para conectar el ERP
+   ----------------------------------------------------------------------------
+   Para conectar: ORIGEN.modo = "api" y ORIGEN.base = la URL de tu backend.
+   Nada más en toda la aplicación sabe de dónde salen los artículos.
+
+   El backend tiene que responder a dos rutas:
+
+     GET  {base}/articulos?q=<texto>&limit=8   -> lista de artículos
+     GET  {base}/articulos/<referencia>        -> un artículo
+
+   Devolviendo JSON con esta forma (array suelto o {"articulos":[...]}):
+
+     { "ref": "500600",                 // referencia del maestro  (obligatorio)
+       "desc": "PLUMERO EXTENSIBLE",    // descripción             (obligatorio)
+       "code": "8436025811529",         // EAN-13 / GTIN-14        (obligatorio)
+       "sym":  "ean13",                 // ean13 | itf14 | code128 (opcional)
+       "marca":"newmop",                // opcional
+       "uds":  "12",                    // unidades por caja       (opcional)
+       "extra":"(INCLUYE ASA)" }        // texto fijo del artículo (opcional)
+
+   Si tus columnas se llaman de otra forma, no toques el resto del código:
+   ajusta MAPA_CAMPOS y ya está.
+   ============================================================================ */
+const ORIGEN = {
+  modo: "demo",     // "demo" = lista local de abajo · "api" = tu backend
+  base: "",         // p.ej. "/api"  o  "https://etiquetas.tuservidor.com/api"
+  token: ""         // si la API pide Bearer, ponlo aquí
+};
+
+/* Nombres de columna del ERP -> campos internos. Varios alias por campo:
+   se coge el primero que venga informado. */
+const MAPA_CAMPOS = {
+  ref:   ["ref", "referencia", "codigo_articulo", "cod_art", "articulo"],
+  desc:  ["desc", "descripcion", "nombre", "denominacion"],
+  code:  ["code", "ean", "ean13", "codigo_barras", "gtin"],
+  sym:   ["sym", "tipo_codigo", "simbologia"],
+  marca: ["marca", "fabricante", "brand"],
+  uds:   ["uds", "unidades_caja", "pcb", "uds_caja"],
+  extra: ["extra", "texto_etiqueta", "observaciones"]
+};
+
+/* Lista de relleno para poder probar sin backend.
+   Al conectar el ERP se pone ORIGEN.modo = "api" y esta constante se borra. */
+const SEED_DEMO = [
+  {ref:"500598", marca:"newmop", desc:"PLUMERO AVESTRUZ MAXI EXTENSIBLE",  uds:"72", code:"8436025811529",  sym:"ean13"},
+  {ref:"200205", marca:"KERKOM", desc:"PLUMERO AVESTRUZ MANGO LARGO",      uds:"12", code:"13142762002053", sym:"itf14"},
+  {ref:"310420", marca:"ACAN",   desc:"NEVERA 21,8 LITROS",                uds:"6",  code:"8410621527572",  sym:"ean13", extra:"(INCLUYE ASA DE CUERDA)"},
+  {ref:"441880", marca:"",       desc:"SALVAMANTEL ENEA MPRO 30 CM",       uds:"96", code:"18414892818282", sym:"itf14"}
+];
+
+/* Normaliza lo que venga del ERP a la forma que usa la aplicación. */
+function normalizaArticulo(raw){
+  const coge = alias => {
+    for(const k of alias){
+      const hit = Object.keys(raw).find(x => x.toLowerCase() === k);
+      if(hit != null && raw[hit] != null && String(raw[hit]).trim() !== "") return String(raw[hit]).trim();
+    }
+    return "";
+  };
+  const a = {};
+  for(const campo in MAPA_CAMPOS) a[campo] = coge(MAPA_CAMPOS[campo]);
+  if(!a.ref || !a.desc || !a.code) return null;         // sin esto no hay etiqueta
+  if(!["ean13","itf14","code128"].includes(a.sym)){      // si el ERP no lo dice, se deduce
+    const d = a.code.replace(/\D/g,"");
+    a.sym = d.length === a.code.length
+      ? (d.length === 13 ? "ean13" : d.length === 14 ? "itf14" : "code128")
+      : "code128";
+  }
+  return a;
+}
+
+/* La aplicación solo habla con este objeto. */
+const ERP = {
+  async buscar(q, signal){
+    if(ORIGEN.modo === "demo"){
+      const s = q.toLowerCase();
+      return SEED_DEMO.filter(a =>
+        a.ref.toLowerCase().includes(s) || a.desc.toLowerCase().includes(s) ||
+        a.code.includes(s) || (a.marca||"").toLowerCase().includes(s)).slice(0,8);
+    }
+    return pedir(`/articulos?q=${encodeURIComponent(q)}&limit=8`, signal, true);
+  },
+  async porRef(ref, signal){
+    if(ORIGEN.modo === "demo") return SEED_DEMO.find(a=>a.ref===ref) || null;
+    return pedir(`/articulos/${encodeURIComponent(ref)}`, signal, false);
+  }
+};
+
+async function pedir(ruta, signal, lista){
+  if(!ORIGEN.base) throw new Error("Falta la URL del backend en ORIGEN.base.");
+  let r;
+  try{
+    r = await fetch(ORIGEN.base.replace(/\/$/,"") + ruta, {
+      signal,
+      headers: Object.assign({Accept:"application/json"},
+               ORIGEN.token ? {Authorization:"Bearer "+ORIGEN.token} : {})
+    });
+  }catch(err){
+    if(err.name === "AbortError") throw err;
+    throw new Error("No se llega al servidor. Comprueba la URL, la VPN y el CORS.");
+  }
+  if(r.status === 401 || r.status === 403) throw new Error("El servidor rechaza las credenciales (" + r.status + ").");
+  if(!r.ok) throw new Error("El servidor respondió " + r.status + ".");
+  let data;
+  try{ data = await r.json(); }
+  catch(_){ throw new Error("La respuesta no es JSON válido."); }
+  if(!lista){
+    const a = normalizaArticulo(data.articulo || data);
+    if(!a) throw new Error("Al artículo le falta referencia, descripción o código.");
+    return a;
+  }
+  const arr = Array.isArray(data) ? data : (data.articulos || data.items || data.data || []);
+  return arr.map(normalizaArticulo).filter(Boolean);
+}
+
+
+const SYMS = {
+  ean13:  {nm:"EAN-13",   minX:0.264, digits:[12,13], help:"12 o 13 dígitos. Si pones 12, calculo el dígito de control."},
+  itf14:  {nm:"ITF-14",   minX:0.330, digits:[13,14], help:"13 o 14 dígitos. Es el código de la caja o agrupación."},
+  code128:{nm:"Code 128", minX:0.190, digits:null,    help:"Texto libre: letras, números y guiones."}
+};
+
+/* ============================================================
+   CÓDIGOS DE BARRAS (codificación real, escaneable)
+   ============================================================ */
+const EAN_L=["0001101","0011001","0010011","0111101","0100011","0110001","0101111","0111011","0110111","0001011"];
+const EAN_G=["0100111","0110011","0011011","0100001","0011101","0111001","0000101","0010001","0001001","0010111"];
+const EAN_R=["1110010","1100110","1101100","1000010","1011100","1001110","1010000","1000100","1001000","1110100"];
+const EAN_P=["LLLLLL","LLGLGG","LLGGLG","LLGGGL","LGLLGG","LGGLLG","LGGGLL","LGLGLG","LGLGGL","LGGLGL"];
+const ITF_P=["NNWWN","WNNNW","NWNNW","WWNNN","NNWNW","WNWNN","NWWNN","NNNWW","WNNWN","NWNWN"];
+const C128=["212222","222122","222221","121223","121322","131222","122213","122312","132212","221213",
+"221312","231212","112232","122132","122231","113222","123122","123221","223211","221132",
+"221231","213212","223112","312131","311222","321122","321221","312212","322112","322211",
+"212123","212321","232121","111323","131123","131321","112313","132113","132311","211313",
+"231113","231311","112133","112331","132131","113123","113321","133121","313121","211331",
+"231131","213113","213311","213131","311123","311321","331121","312113","312311","332111",
+"314111","221411","431111","111224","111422","121124","121421","141122","141221","112214",
+"112412","122114","122411","142112","142211","241211","221114","413111","241112","134111",
+"111242","121142","121241","114212","124112","124211","411212","421112","421211","212141",
+"214121","412121","111143","111341","131141","114113","114311","411113","411311","113141",
+"114131","311141","411131","211412","211214","211232","2331112"];
+
+function gtinCheck(body){            // dígito de control EAN/GTIN
+  let s=0, w = body.length%2===0 ? 1 : 3;   // el peso 3 empieza por la derecha
+  for(const ch of body){ s += (+ch)*w; w = w===3?1:3; }
+  return (10 - (s%10))%10;
+}
+function normalize(raw, sym){
+  const d = (raw||"").replace(/\D/g,"");
+  if(sym==="ean13"){
+    if(d.length===12) return d + gtinCheck(d);
+    if(d.length===13) return d;
+    return null;
+  }
+  if(sym==="itf14"){
+    if(d.length===13) return d + gtinCheck(d);
+    if(d.length===14) return d;
+    return null;
+  }
+  return (raw||"").trim() || null;
+}
+function checkOk(code, sym){
+  if(sym==="ean13" && code && code.length===13) return +code[12] === gtinCheck(code.slice(0,12));
+  if(sym==="itf14" && code && code.length===14) return +code[13] === gtinCheck(code.slice(0,13));
+  return true;
+}
+function widthsToBits(w){
+  let s="", bar=true;
+  for(const c of w){ s += (bar?"1":"0").repeat(+c); bar=!bar; }
+  return s;
+}
+function ean13Bits(c){
+  const d=c.split("").map(Number);
+  let b="101", p=EAN_P[d[0]];
+  for(let i=0;i<6;i++) b += (p[i]==="L"?EAN_L:EAN_G)[d[i+1]];
+  b += "01010";
+  for(let i=7;i<13;i++) b += EAN_R[d[i]];
+  return b + "101";
+}
+function itfBits(c){
+  let b = "1010";                                  // start NNNN
+  for(let i=0;i<c.length;i+=2){
+    const a=ITF_P[+c[i]], z=ITF_P[+c[i+1]];
+    for(let k=0;k<5;k++){
+      b += "1".repeat(a[k]==="W"?2:1);
+      b += "0".repeat(z[k]==="W"?2:1);
+    }
+  }
+  return b + "1101";                               // stop WNN
+}
+function code128Bits(t){
+  const digitsOnly = /^\d+$/.test(t) && t.length>=4 && t.length%2===0;
+  const vals=[];
+  let start;
+  if(digitsOnly){
+    start=105;
+    for(let i=0;i<t.length;i+=2) vals.push(+t.slice(i,i+2));
+  }else{
+    start=104;
+    for(const ch of t){
+      const v=ch.charCodeAt(0)-32;
+      vals.push(v>=0 && v<=94 ? v : 0);
+    }
+  }
+  let sum=start;
+  vals.forEach((v,i)=> sum += v*(i+1));
+  const seq=[start,...vals,sum%103,106];
+  return seq.map(i=>widthsToBits(C128[i])).join("");
+}
+function barcode(code, sym){
+  if(!code) return null;
+  if(sym==="ean13")   return {bits:ean13Bits(code),   quiet:9,  txt:code};
+  if(sym==="itf14")   return {bits:itfBits(code),     quiet:10, txt:code};
+  return {bits:code128Bits(code), quiet:10, txt:code};
+}
+
+/* ============================================================
+   IMÁGENES: rasterizado a 1 bit (203 dpi) + Floyd–Steinberg
+   Una térmica solo sabe quemar o no quemar: no hay grises.
+   ============================================================ */
+const DPMM = 8;                       // 203 dpi
+const rasterCache = new Map();
+
+function rasterize(entry, wmm, hmm){
+  const key = `${entry.src.length}|${entry.mode}|${wmm.toFixed(2)}|${hmm.toFixed(2)}`;
+  const hit = rasterCache.get(key);
+  if(hit) return hit;
+
+  const W = Math.max(1, Math.round(wmm*DPMM)), H = Math.max(1, Math.round(hmm*DPMM));
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const cx = c.getContext("2d", {willReadFrequently:true});
+  cx.fillStyle = "#fff"; cx.fillRect(0,0,W,H);
+  try{ cx.drawImage(entry.img, 0, 0, W, H); }catch(_){ return null; }
+
+  const id = cx.getImageData(0,0,W,H), p = id.data;
+  const g = new Float32Array(W*H);
+  for(let i=0;i<W*H;i++){
+    const a = p[i*4+3]/255;
+    const lum = 0.299*p[i*4] + 0.587*p[i*4+1] + 0.114*p[i*4+2];
+    g[i] = lum*a + 255*(1-a);           // lo transparente se vuelve blanco
+  }
+  const bits = new Uint8Array(W*H);
+  if(entry.mode === "line"){
+    for(let i=0;i<W*H;i++) bits[i] = g[i] < 150 ? 1 : 0;
+  }else{
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      const i = y*W+x, old = g[i], nw = old < 128 ? 0 : 255;
+      bits[i] = nw === 0 ? 1 : 0;
+      const e = old - nw;
+      if(x+1<W)            g[i+1]   += e*7/16;
+      if(y+1<H){
+        if(x>0)            g[i+W-1] += e*3/16;
+                           g[i+W]   += e*5/16;
+        if(x+1<W)          g[i+W+1] += e*1/16;
+      }
+    }
+  }
+  for(let i=0;i<W*H;i++){ const v = bits[i] ? 0 : 255; p[i*4]=p[i*4+1]=p[i*4+2]=v; p[i*4+3]=255; }
+  cx.putImageData(id,0,0);
+  const out = {png:c.toDataURL("image/png"), bits, W, H};
+  if(rasterCache.size > 40) rasterCache.clear();
+  rasterCache.set(key, out);
+  return out;
+}
+
+function toGFA(r){                      // bitmap 1 bit -> comando ^GFA de ZPL
+  const bpr = Math.ceil(r.W/8), total = bpr*r.H;
+  let hex = "";
+  for(let y=0;y<r.H;y++){
+    for(let b=0;b<bpr;b++){
+      let byte = 0;
+      for(let k=0;k<8;k++){
+        const x = b*8+k;
+        if(x < r.W && r.bits[y*r.W+x]) byte |= 0x80 >> k;
+      }
+      hex += byte.toString(16).padStart(2,"0").toUpperCase();
+    }
+  }
+  return {cmd:`^GFA,${total},${total},${bpr},`, hex, total, bpr};
+}
+
+/* ============================================================
+   MOTOR DE COMPOSICIÓN (todo en milímetros)
+   ============================================================ */
+const mCanvas = document.createElement("canvas").getContext("2d");
+const FONT_LBL = '"Archivo Narrow","Arial Narrow",Arial,sans-serif';
+function textW(txt, mm, weight){
+  mCanvas.font = `${weight} ${mm*10}px ${FONT_LBL}`;
+  return mCanvas.measureText(txt).width/10;
+}
+function wrap(txt, mm, weight, maxW, maxLines){
+  const words = txt.split(/\s+/).filter(Boolean);
+  const lines=[]; let cur="";
+  for(const w of words){
+    const t = cur ? cur+" "+w : w;
+    if(textW(t,mm,weight) <= maxW || !cur) cur = t;
+    else { lines.push(cur); cur = w; }
+  }
+  if(cur) lines.push(cur);
+  const cut = lines.length > maxLines;
+  return {lines: lines.slice(0,maxLines), cut, widest: Math.max(0,...lines.map(l=>textW(l,mm,weight)))};
+}
+function size(){
+  const s = SIZES.find(x=>x.id===st.sizeId);
+  return st.landscape ? {...s, w:s.h, h:s.w} : s;
+}
+function compose(scale){
+  const S = size(), W = S.w, H = S.h;
+  const pad = Math.max(0.7, Math.min(3.2, W*0.045));
+  const availW = W - pad*2;
+  const bAvailW = W - Math.max(0.5, pad*0.4)*2;   // el código aprovecha casi todo el ancho
+  const issues = [];
+  const k = scale;
+
+  const base = Math.max(1.2, Math.min(4.2, H*0.075)) * k;
+  const tiny = () => base*0.66;
+
+  const gap = base*0.22;
+  const bc = barcode(normalize(st.code, st.sym), st.sym);
+  const hrH = base*0.8;
+
+  /* ---- qué campos hay contenido para pintar ---- */
+  const metaTxt = [st.uds ? st.uds+" UDS" : null, st.lote ? "LOTE "+st.lote : null]
+                  .filter(Boolean).join("  ·  ");
+  const has = {
+    logo:  !!(st.logo && st.logo.img),
+    marca: !!st.marca,
+    ref:   !!st.ref,
+    desc:  !!st.desc,
+    meta:  !!metaTxt,
+    extra: !!st.extra,
+    barcode: !!bc
+  };
+  const ids = st.order.filter(id => has[id]);
+
+  const cw = availW;
+
+  /* ---- construir los bloques en el orden elegido ---- */
+  const blocks = [];
+  const push = (o) => blocks.push(Object.assign({cx:W/2, lx:pad}, o));
+
+  for(const id of ids){
+    if(id === "logo"){
+      const ar = st.logo.img.naturalWidth / st.logo.img.naturalHeight || 3;
+      let lh = Math.min(base*2.1, H*0.13), lw = lh*ar;
+      if(lw > availW*0.8){ lw = availW*0.8; lh = lw/ar; }
+      push({t:"logo", img:{w:lw, h:lh, entry:st.logo}, h:lh});
+      if(lw*DPMM < 40) issues.push({k:"logores", lvl:"warn",
+        msg:`El logo sale a ${Math.round(lw*DPMM)} puntos de ancho. Por debajo de 40 no se distingue: usa un SVG o un PNG grande.`});
+    }
+    else if(id === "marca") push({t:"marca", txt:st.marca.toUpperCase(), f:base*0.95, w:700, ls:.06, h:base*1.25});
+    else if(id === "ref")   push({t:"ref",   txt:"REF: "+st.ref, f:tiny(), w:400, ls:.03, h:tiny()*1.35});
+    else if(id === "desc"){
+      const d = wrap(st.desc.toUpperCase(), base, 600, availW, 3);
+      push({t:"desc", lines:d.lines, f:base, w:600, ls:.01, h:d.lines.length*base*1.22});
+      if(d.cut) issues.push({k:"desc", lvl:"warn",
+        msg:`La descripción no cabe en ${W} × ${H} mm y se queda cortada. Acórtala, reduce el texto o sube de tamaño.`});
+    }
+    else if(id === "meta"){
+      const f = tiny();
+      push({t:"meta", txt:metaTxt, f, w:400, ls:.02, h:f*1.5});
+      if(textW(metaTxt,f,400) > availW) issues.push({k:"meta", lvl:"warn",
+        msg:`La línea de unidades y lote necesita ${textW(metaTxt,f,400).toFixed(1)} mm y solo hay ${availW.toFixed(1)} mm de ancho útil.`});
+    }
+    else if(id === "extra"){
+      const e = wrap(st.extra, tiny(), 400, availW, 2);
+      push({t:"extra", lines:e.lines, f:tiny(), w:400, ls:0, h:e.lines.length*tiny()*1.3});
+    }
+    else if(id === "barcode") push({t:"barcode", h:0});
+  }
+
+  /* el código ocupa el hueco que sobra, esté donde esté en el orden */
+  const used = blocks.reduce((a,b)=>a+b.h, 0) + blocks.length*gap;
+  let bcBox = H - pad*2 - used;
+  const bcBlock = blocks.find(b=>b.t==="barcode");
+  if(bcBlock) bcBlock.h = Math.max(0, bcBox);
+
+  if(base < 1.55) issues.push({k:"font", lvl:"warn",
+    msg:`El texto queda a ${(base*2.83).toFixed(1)} pt. Por debajo de 4,5 pt no se lee a un brazo de distancia.`});
+
+  if(bc){
+    const total = bc.bits.length + bc.quiet*2;
+    const X = bAvailW/total;
+    const minX = SYMS[st.sym].minX;
+    const need = Math.ceil(total*minX + Math.max(0.5, pad*0.4)*2);
+    if(X < minX*0.9){
+      issues.push({k:"bcw", lvl:"bad",
+        msg:`Un ${SYMS[st.sym].nm} necesita ${need} mm de ancho para que lo lea la pistola. Esta etiqueta tiene ${W} mm.`});
+    }else if(X < minX){
+      issues.push({k:"bcw", lvl:"warn",
+        msg:`El código queda a ${Math.round(X/minX*80)}% de ampliación (módulo ${X.toFixed(3)} mm). Justo en el límite: prueba a leerlo antes de tirar la serie.`});
+    }
+    const barsH = bcBox - hrH - base*0.3;
+    if(barsH < 5) issues.push({k:"bch", lvl:"bad",
+      msg:`No queda alto para las barras: harían falta 6 mm y solo hay ${Math.max(0,barsH).toFixed(1)} mm. Quita campos o sube de tamaño.`});
+    else if(barsH < 8 && st.sym!=="code128") issues.push({k:"bch", lvl:"warn",
+      msg:`Las barras quedan a ${barsH.toFixed(1)} mm de alto. Con menos de 8 mm el lector falla si la pistola no va recta.`});
+  }
+  return {S, W, H, pad, availW, bAvailW, blocks, bc, bcBox, hrH, base, gap, cw, issues,
+          fits: !issues.some(i=>i.lvl==="bad" || i.k==="desc" || i.k==="meta")};
+}
+function autoFit(){
+  for(const s of [1,.92,.84,.76,.68,.6]){
+    if(compose(s).fits) return s;
+  }
+  return null;            // no hay escala que lo arregle: hay que cambiar de tamaño
+}
+
+/* ============================================================
+   DIBUJO SVG
+   ============================================================ */
+function svgLabel(L, zoom){
+  const {W,H,pad,availW,bAvailW,blocks,bc,bcBox,hrH,base,gap,cw} = L;
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  let y = pad, out = "";
+
+  const imgTag = (entry, x, yy, w, h) => {
+    let href = entry.src;
+    if(st.dither){
+      const r = rasterize(entry, w, h);
+      if(r) href = r.png;
+    }
+    return `<image x="${x.toFixed(2)}" y="${yy.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" href="${href}" preserveAspectRatio="xMidYMid meet"/>`;
+  };
+
+  const line = (txt,f,w,ls,anchor,b) => {
+    const x = anchor==="middle" ? b.cx : b.lx;
+    const cp = b.clip ? ' clip-path="url(#col)"' : '';
+    out += `<text x="${x.toFixed(2)}" y="${(y+f*0.82).toFixed(2)}"${cp} font-family='Archivo Narrow, Arial Narrow, Arial, sans-serif' font-size="${f.toFixed(2)}" font-weight="${w}" letter-spacing="${(ls*f).toFixed(3)}" text-anchor="${anchor}" fill="#000">${esc(txt)}</text>`;
+  };
+
+  const drawBarcode = (yy, box) => {
+    if(!bc) return;
+    const total = bc.bits.length + bc.quiet*2;
+    const X = bAvailW/total;
+    const barsH = Math.max(1.5, box - hrH - base*0.3);
+    let bx = (W - bAvailW)/2 + bc.quiet*X, run=0;
+    for(let i=0;i<bc.bits.length;i++){
+      if(bc.bits[i]==="1"){ run++; }
+      if(bc.bits[i]==="0" || i===bc.bits.length-1){
+        if(run){
+          out += `<rect x="${bx.toFixed(3)}" y="${yy.toFixed(2)}" width="${(run*X).toFixed(3)}" height="${barsH.toFixed(2)}" fill="#000"/>`;
+          bx += run*X; run=0;
+        }
+        if(bc.bits[i]==="0") bx += X;
+      }
+    }
+    if(run) out += `<rect x="${bx.toFixed(3)}" y="${yy.toFixed(2)}" width="${(run*X).toFixed(3)}" height="${barsH.toFixed(2)}" fill="#000"/>`;
+    out += `<text x="${(W/2).toFixed(2)}" y="${(yy+barsH+hrH*0.9).toFixed(2)}" font-family='IBM Plex Mono, monospace' font-size="${hrH.toFixed(2)}" letter-spacing="${(hrH*0.12).toFixed(2)}" text-anchor="middle" fill="#000">${esc(bc.txt)}</text>`;
+  };
+
+  blocks.forEach((b,i)=>{
+    b._y = y;                                   // se guarda para las zonas arrastrables
+    if(b.t === "logo"){
+      out += imgTag(b.img.entry, (W-b.img.w)/2, y, b.img.w, b.img.h);
+      y += b.h;
+    }else if(b.t === "barcode"){
+      drawBarcode(y, b.h);
+      y += b.h;
+    }else{
+      const mid = b.t==="desc" || b.t==="meta" || b.t==="extra" || b.t==="marca";
+      if(b.lines){
+        for(const l of b.lines){ line(l,b.f,b.w,b.ls,mid?"middle":"start",b); y += b.f*(b.t==="desc"?1.22:1.3); }
+      }else{
+        line(b.txt,b.f,b.w,b.ls,mid?"middle":"start",b);
+        y += b.h;
+      }
+    }
+    b._h = y - b._y;
+    y += gap;
+  });
+  return `<svg width="${(W*zoom).toFixed(0)}" height="${(H*zoom).toFixed(0)}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Etiqueta ${W} por ${H} milímetros">`
+    + `<defs><clipPath id="lbl"><rect width="${W}" height="${H}"/></clipPath>`
+    + `<clipPath id="col"><rect x="${pad}" y="0" width="${cw}" height="${H}"/></clipPath></defs>`
+    + `<rect width="${W}" height="${H}" fill="#fff"/>`
+    + `<g clip-path="url(#lbl)">${out}</g></svg>`;
+}
+
+/* ============================================================
+   ZPL (203 dpi = 8 puntos/mm)
+   ============================================================ */
+function zpl(){
+  const L = compose(st.fitScale), D = 8;
+  const mm = v => Math.round(v*D);
+  const {W,H,pad,availW,bAvailW,blocks,bc,bcBox,hrH,base,gap} = L;
+  const out = [`^XA`, `^CI28`, `^PW${mm(W)}`, `^LL${mm(H)}`, `^LH0,0`];
+  let y = pad;
+
+  const gfa = (entry, x, yy, w, h, etiqueta) => {
+    const r = rasterize(entry, w, h);
+    if(!r) return;
+    const g = toGFA(r);
+    const corto = g.hex.length > 600 ? g.hex.slice(0,600) + `\n… (${g.total} bytes en total)` : g.hex;
+    out.push(`^FO${mm(x)},${mm(yy)}${g.cmd}${corto}^FS   ${etiqueta} ${r.W}×${r.H} px`);
+  };
+
+  blocks.forEach((b,i)=>{
+    if(b.t === "logo"){
+      gfa(b.img.entry, (W-b.img.w)/2, y, b.img.w, b.img.h, "; logo");
+      y += b.h;
+    }else if(b.t === "barcode"){
+      const total = bc.bits.length + bc.quiet*2;
+      const X = Math.max(1, Math.round(bAvailW/total*D));
+      const barsH = mm(Math.max(1.5, b.h - hrH - base*0.3));
+      const bx = mm((W - bAvailW)/2);
+      out.push(`^BY${X},2.5,${barsH}`);
+      if(st.sym==="ean13")      out.push(`^FO${bx},${mm(y)}^BEN,${barsH},Y,N^FD${bc.txt.slice(0,12)}^FS`);
+      else if(st.sym==="itf14") out.push(`^FO${bx},${mm(y)}^BIN,${barsH},Y,N^FD${bc.txt}^FS`);
+      else                      out.push(`^FO${bx},${mm(y)}^BCN,${barsH},Y,N,N^FD${bc.txt}^FS`);
+      y += b.h;
+    }else if(b.lines){
+      for(const l of b.lines){
+        out.push(`^FO${mm(b.lx)},${mm(y)}^A0N,${mm(b.f)},${mm(b.f*0.55)}^FB${mm((b.cx-b.lx)*2)},1,0,C^FD${l}^FS`);
+        y += b.f*(b.t==="desc"?1.22:1.3);
+      }
+    }else{
+      out.push(`^FO${mm(b.lx)},${mm(y)}^A0N,${mm(b.f)},${mm(b.f*0.55)}^FB${mm((b.cx-b.lx)*2)},1,0,C^FD${b.txt}^FS`);
+      y += b.h;
+    }
+    y += gap;
+  });
+  out.push(`^PQ${st.copies}`, `^XZ`);
+  return out.join("\n");
+}
+
+/* ============================================================
+   PINTAR
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function step1Valid(){
+  const c = normalize(st.code, st.sym);
+  return !!st.desc.trim() && !!c && checkOk(c, st.sym);
+}
+
+function renderStepper(){
+  $("#stepper").innerHTML = STEPS.map((t,i)=>{
+    const cur = i===st.step;
+    const reach = i===0 || (i>=1 && step1Valid());
+    return `<button data-go="${i}" ${cur?'aria-current="true"':''} class="${i<st.step?'done':''}" ${reach?'':'disabled'}>
+      <span class="n">${i<st.step?'✓':i+1}</span><span class="t">${t}</span></button>`;
+  }).join("");
+}
+
+const ICONS = {
+  warn:`<svg class="ic" viewBox="0 0 20 20" fill="none"><path d="M10 2.8 18 17H2L10 2.8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8v4M10 14.4v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  bad:`<svg class="ic" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  good:`<svg class="ic" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M6.6 10.4l2.4 2.4 4.4-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  info:`<svg class="ic" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 9v4.6M10 6.4v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`
+};
+
+function renderMain(){
+  const m = $("#main");
+  if(st.step===0) m.innerHTML = view1();
+  if(st.step===1) m.innerHTML = view2();
+  if(st.step===2) m.innerHTML = view3();
+  if(st.step===3) m.innerHTML = view4();
+}
+
+function searchResults(){
+  if(st.buscando) return `<p class="results-empty"><span class="spin"></span> Consultando el catálogo…</p>`;
+  if(st.errorBusqueda) return `<p class="results-empty err">${esc(st.errorBusqueda)} Puedes rellenar los campos a mano.</p>`;
+  const q = st.q.trim();
+  if(q.length < 2) return `<p class="results-empty">Escribe dos letras, la referencia, o escanea el código. Déjalo en blanco para rellenar a mano.</p>`;
+  if(!st.resultados.length) return `<p class="results-empty">Ningún artículo coincide con “${esc(q)}”.</p>`;
+  return st.resultados.map((a,i)=>`<button class="res" data-idx="${i}">
+    <span class="res-ref">${esc(a.ref)}</span>
+    <span class="res-desc">${esc(a.desc)}</span>
+    <span class="res-code">${esc(a.code)}</span></button>`).join("");
+}
+function pintarResultados(){
+  const box = document.querySelector(".results");
+  if(box) box.innerHTML = searchResults();
+}
+
+let buscarTimer = null, buscarAbort = null;
+function lanzarBusqueda(){
+  clearTimeout(buscarTimer);
+  if(buscarAbort){ buscarAbort.abort(); buscarAbort = null; }
+  const q = st.q.trim();
+  if(q.length < 2){
+    st.resultados = []; st.buscando = false; st.errorBusqueda = null;
+    pintarResultados(); return;
+  }
+  st.buscando = true; st.errorBusqueda = null; pintarResultados();
+  buscarTimer = setTimeout(async ()=>{
+    const ac = new AbortController();
+    buscarAbort = ac;
+    try{
+      const res = await ERP.buscar(q, ac.signal);
+      if(ac.signal.aborted) return;
+      st.buscando = false;
+      st.resultados = res;
+      // una pistola teclea el código entero: si hay una coincidencia exacta, se elige sola
+      const exacto = res.find(a => a.code === q.replace(/\s/g,""));
+      if(exacto){ elegirArticulo(exacto); return; }
+      pintarResultados();
+    }catch(err){
+      if(err.name === "AbortError") return;
+      st.buscando = false;
+      st.errorBusqueda = err.message || "No se pudo consultar el catálogo.";
+      pintarResultados();
+    }
+  }, 220);
+}
+
+function view1(){
+  const code = normalize(st.code, st.sym);
+  let hint = `<span class="hint">${SYMS[st.sym].help}</span>`;
+  if(st.code.trim()){
+    if(!code) hint = `<span class="hint err">Faltan dígitos para un ${SYMS[st.sym].nm}.</span>`;
+    else if(!checkOk(code, st.sym)) hint = `<span class="hint err">Dígito de control incorrecto: debería terminar en ${gtinCheck(code.slice(0,-1))}.</span>`;
+    else if(code !== st.code.replace(/\D/g,"") && st.sym!=="code128") hint = `<span class="hint ok">Dígito de control añadido → ${code}</span>`;
+    else hint = `<span class="hint ok">${SYMS[st.sym].nm} correcto.</span>`;
+  }
+  const art = st.articulo;
+  const ro = art && st.locked ? " readonly" : "";
+  const lk = art && st.locked ? `<span class="lock" title="Viene del ERP">ERP</span>` : "";
+
+  return `<div class="panel">
+    <div class="panel-head"><h2>Datos de la etiqueta</h2><p>Busca el artículo o rellena los campos a mano.</p></div>
+    <div class="panel-body">
+
+      <div class="src">
+        <div class="src-head">
+          <span class="src-nm">Artículo</span>
+          <span class="src-pill">catálogo de ejemplo · simula el ERP</span>
+        </div>
+        ${art ? `
+          <div class="chosen">
+            <div>
+              <span class="chosen-ref">${esc(art.ref)}</span>
+              <span class="chosen-desc">${esc(art.desc)}</span>
+            </div>
+            <div class="chosen-acts">
+              <button class="btn btn-ghost btn-small" data-act="unlock">${st.locked?"Desbloquear":"Bloquear"}</button>
+              <button class="btn btn-ghost btn-small" data-act="clear-art">Cambiar</button>
+            </div>
+          </div>
+          ${st.locked
+            ? `<p class="src-note">Los campos del maestro llegan rellenos y bloqueados. El lote, el texto adicional y las copias sí son de esta impresión.</p>`
+            : `<p class="src-note warn">Editando sobre el artículo. El cambio vale solo para esta etiqueta, no vuelve al ERP.</p>`}
+        ` : `
+          <input id="f-q" class="mono" data-k="q" value="${esc(st.q)}" placeholder="Referencia, descripción o escanea el código" autocomplete="off">
+          <div class="results">${searchResults()}</div>
+        `}
+      </div>
+
+      <div class="grid2">
+        <div class="field"><label for="f-marca">Marca <span class="opt">opcional</span>${lk}</label>
+          <input id="f-marca" data-k="marca" value="${esc(st.marca)}" placeholder="newmop"${ro}></div>
+        <div class="field"><label for="f-ref">Referencia <span class="opt">opcional</span>${lk}</label>
+          <input id="f-ref" class="mono" data-k="ref" value="${esc(st.ref)}" placeholder="500600"${ro}></div>
+        <div class="field span"><label for="f-desc">Descripción <span class="req">obligatorio</span>${lk}</label>
+          <textarea id="f-desc" data-k="desc" placeholder="PLUMERO AVESTRUZ MAXI EXTENSIBLE"${ro}>${esc(st.desc)}</textarea>
+          <span class="hint">Se reparte en 3 líneas como máximo.</span></div>
+        <div class="field"><label for="f-uds">Unidades por caja <span class="opt">opcional</span>${lk}</label>
+          <input id="f-uds" class="mono" data-k="uds" inputmode="numeric" value="${esc(st.uds)}" placeholder="72"${ro}></div>
+        <div class="field"><label for="f-lote">Lote <span class="opt">de esta impresión</span></label>
+          <input id="f-lote" class="mono" data-k="lote" value="${esc(st.lote)}" placeholder="1123B9110526"></div>
+        <div class="field span"><label for="f-extra">Texto adicional <span class="opt">opcional</span></label>
+          <input id="f-extra" data-k="extra" value="${esc(st.extra)}" placeholder="(INCLUYE ASA DE CUERDA)"></div>
+        <div class="field"><label for="f-code">Código de barras <span class="req">obligatorio</span>${lk}</label>
+          <input id="f-code" class="mono" data-k="code" value="${esc(st.code)}" placeholder="8436025811529"${ro}>${hint}</div>
+        <div class="field"><label for="f-sym">Tipo de código${lk}</label>
+          <select id="f-sym" data-k="sym"${art && st.locked ? " disabled" : ""}>
+            ${Object.entries(SYMS).map(([k,v])=>`<option value="${k}" ${st.sym===k?"selected":""}>${v.nm}</option>`).join("")}
+          </select>
+          <span class="hint">EAN-13 = unidad · ITF-14 = caja</span></div>
+      </div>
+
+      <div class="imgsec">
+        <h3>Logo de marca <span>opcional · se imprime arriba y se puede arrastrar</span></h3>
+        <div class="logowrap">
+          <div class="slot">
+            ${st.logo?`<div class="slot-top">
+              <span class="slot-nm">Logo cargado</span>
+              <button class="btn btn-ghost btn-small" data-act="del-logo">Quitar</button>
+            </div>`:""}
+            ${st.logo
+              ? `<div class="thumb"><img src="${st.logo.src}" alt="Logo cargado"></div>`
+              : `<label class="drop" for="f-logo">Subir PNG, JPG o SVG<em>Para un logo, SVG o PNG con fondo transparente</em></label>`}
+            <input type="file" id="f-logo" data-img="logo" accept="image/*" class="vh">
+            ${st.logo?`<label class="mini" for="m-logo">Tipo de original</label>
+              <select id="m-logo" data-imgmode="logo">
+                <option value="line" ${st.logo.mode==="line"?"selected":""}>Logo o dibujo (blanco y negro)</option>
+                <option value="photo" ${st.logo.mode==="photo"?"selected":""}>Foto (tramada)</option>
+              </select>`:""}
+          </div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <span class="spacer"></span>
+        <button class="btn btn-primary" data-go="1" ${step1Valid()?"":"disabled"}>Elegir tamaño →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function view2(){
+  const maxD = 150, box = 56;
+  const actual = grupoDe(st.sizeId);
+  return `<div class="panel">
+    <div class="panel-head"><h2>Plantilla</h2><p>Tres plantillas en vez de seis medidas. La misma se recompone sola al tamaño del rollo.</p></div>
+    <div class="panel-body">
+      <div class="sizes">
+        ${GRUPOS.map(g=>{
+          const s = SIZES.find(x=>x.id === g.sizes[g.sizes.length-1]);
+          const w = Math.max(6, s.w/maxD*box), h = Math.max(6, s.h/maxD*box);
+          const sel = g.id === actual.id;
+          return `<button class="size" data-grupo="${g.id}" aria-pressed="${sel}">
+            <span class="shape"><i style="width:${w.toFixed(1)}px;height:${h.toFixed(1)}px"></i></span>
+            <span><span class="dims">${g.nm}</span>
+            <span class="nm">${g.sizes.map(id=>{const z=SIZES.find(x=>x.id===id); return z.w+"×"+z.h;}).join(" · ")} mm</span>
+            <span class="note">${g.note}</span></span></button>`;
+        }).join("")}
+      </div>
+
+      ${actual.sizes.length > 1 ? `
+        <div class="rollo">
+          <span class="rollo-lbl">Rollo cargado en la impresora</span>
+          <div class="rollo-chips">
+            ${actual.sizes.map(id=>{
+              const z = SIZES.find(x=>x.id===id);
+              return `<button class="chip" data-size="${id}" aria-pressed="${st.sizeId===id}">${z.w} × ${z.h} mm</button>`;
+            }).join("")}
+          </div>
+        </div>` : ""}
+      <div class="nav">
+        <button class="btn btn-ghost" data-go="0">← Atrás</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" data-go="2">Previsualizar →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function view3(){
+  const L = compose(st.fitScale);
+  const S = size();
+  let alerts;
+  if(L.issues.length===0){
+    alerts = `<div class="alert good">${ICONS.good}<div><h3>Todo cabe</h3>
+      <p>El contenido entra en ${S.w} × ${S.h} mm y el código queda en medida legible.</p></div></div>`;
+  }else{
+    alerts = L.issues.map(i=>`<div class="alert ${i.lvl}">${ICONS[i.lvl]}<div>
+      <h3>${i.lvl==="bad"?"No se puede imprimir así":"Revisa esto"}</h3><p>${esc(i.msg)}</p></div></div>`).join("");
+  }
+  const fit = autoFit();
+  const canFit = st.fitScale===1 && fit !== null && fit < 1;
+  return `<div class="panel">
+    <div class="panel-head"><h2>Comprobación</h2><p>Se valida que el contenido del paso 1 quepa en el tamaño del paso 2.</p></div>
+    <div class="panel-body">
+      <div class="alerts">${alerts}</div>
+      <div class="fixes">
+        ${canFit?`<button class="btn btn-ghost btn-small" data-act="autofit">Ajustar automáticamente</button>`:""}
+        ${st.fitScale!==1?`<button class="btn btn-ghost btn-small" data-act="resetfit">Quitar el ajuste (texto al ${Math.round(st.fitScale*100)}%)</button>`:""}
+        <button class="btn btn-ghost btn-small" data-act="rotate">Girar a ${S.h} × ${S.w} mm</button>
+        <button class="btn btn-ghost btn-small" data-go="1">Cambiar de tamaño</button>
+      </div>
+      <div class="grid2" style="margin-top:18px">
+        <div class="field"><label for="f-copies">Número de copias</label>
+          <input id="f-copies" class="mono" data-k="copies" inputmode="numeric" value="${st.copies}"></div>
+        <div class="field"><label>Medida final</label>
+          <input class="mono" value="${S.w} × ${S.h} mm${st.landscape?" (girada)":""}" readonly tabindex="-1"></div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-ghost" data-go="1">← Atrás</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" data-go="3">Continuar a imprimir →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function view4(){
+  const S = size(), code = normalize(st.code, st.sym);
+  const rows = [
+    ["Descripción", st.desc || "—"],
+    ["Código", `${code} · ${SYMS[st.sym].nm}`],
+    ["Tamaño", `${S.w} × ${S.h} mm`],
+    ["Lote", st.lote || "—"],
+    ["Copias", st.copies]
+  ];
+  let detail = "";
+  if(st.route==="pdf"){
+    detail = `<div class="alert info" style="margin-top:16px">${ICONS.info}<div>
+      <h3>PDF a medida exacta</h3>
+      <p>Se genera un PDF de ${S.w} × ${S.h} mm, una página por copia, y se abre el diálogo de impresión.
+      Vale para cualquier impresora. En la aplicación final lo monta <code>@react-pdf/renderer</code> en el servidor.</p></div></div>`;
+  }
+  if(st.route==="zpl"){
+    detail = `<div class="codewrap">
+      <header><span>ZPL generado · 203 dpi</span>
+        <button class="btn btn-ghost btn-small" data-act="copy">Copiar</button></header>
+      <pre id="zplOut">${esc(zpl())}</pre></div>
+      <div class="alert info" style="margin-top:12px">${ICONS.info}<div>
+        <h3>Esto es lo que recibe la impresora</h3>
+        <p>Se manda tal cual al puerto 9100 de la Zebra, o al agente local del puesto. Sin PDF y sin diálogo: sale la etiqueta.</p></div></div>`;
+  }
+  return `<div class="panel">
+    <div class="panel-head"><h2>Imprimir</h2><p>Revisa el resumen y elige por dónde sale.</p></div>
+    <div class="panel-body">
+      <dl class="summary">${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+      <div class="routes">
+        <button class="route" data-route="pdf" aria-pressed="${st.route==="pdf"}">
+          <h3>Descargar PDF</h3>
+          <p>Medida exacta, cualquier impresora. Un clic más: el diálogo del navegador.</p>
+          <span class="tag">impresora normal</span></button>
+        <button class="route" data-route="zpl" aria-pressed="${st.route==="zpl"}">
+          <h3>Enviar a térmica</h3>
+          <p>Comando ZPL directo. Barras nítidas y nada de diálogos.</p>
+          <span class="tag">zebra · tsc</span></button>
+      </div>
+      ${detail}
+      <div class="nav">
+        <button class="btn btn-ghost" data-go="2">← Atrás</button>
+        <span class="spacer"></span>
+        <button class="btn btn-ghost" data-act="again">Imprimir otra etiqueta</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+const NOMBRE = {logo:"Logo", marca:"Marca", ref:"Referencia", desc:"Descripción",
+                meta:"Unidades y lote", extra:"Texto adicional", barcode:"Código de barras"};
+
+function renderPreview(){
+  const L = compose(st.fitScale);
+  const col = document.querySelector(".previewCol").clientWidth || 320;
+  const maxW = Math.max(120, col - 30), maxH = 380;
+  const zoom = Math.min(maxW/L.W, maxH/L.H, 7);
+  const box = $("#labelBox");
+  box.style.width = (L.W*zoom).toFixed(0)+"px";
+  box.innerHTML = svgLabel(L, zoom) + `<div id="hits"></div>`;
+
+  const hits = $("#hits");
+  L.blocks.forEach((b,i)=>{
+    const d = document.createElement("button");
+    d.className = "hit";
+    d.type = "button";
+    d.dataset.idx = i;
+    d.dataset.id = b.t;
+    d.style.top = (b._y*zoom).toFixed(1)+"px";
+    d.style.height = Math.max(10, b._h*zoom).toFixed(1)+"px";
+    d.setAttribute("aria-label", `${NOMBRE[b.t]||b.t}. Arrastra o usa Alt y flechas para moverlo.`);
+    d.innerHTML = `<span class="hit-tag">${NOMBRE[b.t]||b.t}</span>`;
+    hits.appendChild(d);
+  });
+  hits.insertAdjacentHTML("beforeend", `<div id="dropline" hidden></div>`);
+
+  $("#metaSize").innerHTML = `<b>${L.W} × ${L.H}</b> mm`;
+  const bcX = L.bc ? (L.bAvailW/(L.bc.bits.length+L.bc.quiet*2)) : 0;
+  $("#metaScale").innerHTML = L.bc ? `módulo <b>${bcX.toFixed(3)}</b> mm` : `escala ${Math.round(zoom/3.7795*100)}%`;
+  const rb = $("#resetOrder");
+  if(rb) rb.hidden = st.order.join() === ORDEN_INICIAL.join();
+  pintarEstadoConexion();
+}
+
+/* ---------- arrastrar para reordenar ---------- */
+const ORDEN_INICIAL = st.order.slice();
+
+/* insertAt = hueco donde se suelta (0…n), contado sobre la lista actual */
+function moverBloque(fromIdx, insertAt){
+  const vis = Array.from(document.querySelectorAll("#hits .hit")).map(h=>h.dataset.id);
+  if(insertAt < 0 || insertAt > vis.length) return false;
+  if(insertAt === fromIdx || insertAt === fromIdx + 1) return false;   // no se mueve
+  const movido = vis[fromIdx];
+  const destino = insertAt >= vis.length ? null : vis[insertAt];
+  const o = st.order.filter(x => x !== movido);
+  const at = destino === null ? o.length : o.indexOf(destino);
+  o.splice(at < 0 ? o.length : at, 0, movido);
+  if(o.join() === st.order.join()) return false;
+  st.order = o;
+  return true;
+}
+
+let drag = null;
+document.addEventListener("pointerdown", e=>{
+  const hit = e.target.closest("#hits .hit");
+  if(!hit) return;
+  e.preventDefault();
+  const hits = Array.from(document.querySelectorAll("#hits .hit"));
+  drag = {
+    el: hit,
+    from: +hit.dataset.idx,
+    to: +hit.dataset.idx,
+    y0: e.clientY,
+    boxH: $("#labelBox").clientHeight,
+    boxTop: $("#labelBox").getBoundingClientRect().top,
+    rects: hits.map(h=>({top:h.offsetTop, h:h.offsetHeight}))
+  };
+  hit.setPointerCapture(e.pointerId);
+  hit.classList.add("dragging");
+  document.body.classList.add("dragging-on");
+});
+document.addEventListener("pointermove", e=>{
+  if(!drag) return;
+  const r = drag.rects[drag.from];
+  // el bloque arrastrado no se sale de la etiqueta
+  const dy = Math.max(-r.top - 6, Math.min(e.clientY - drag.y0, drag.boxH - r.top - r.h + 6));
+  drag.el.style.transform = `translateY(${dy}px)`;
+  const local = e.clientY - drag.boxTop;      // se inserta donde está el cursor
+  let to = drag.rects.length;
+  for(let i=0;i<drag.rects.length;i++){
+    if(local < drag.rects[i].top + drag.rects[i].h/2){ to = i; break; }
+  }
+  drag.to = to;
+  const dl = $("#dropline");
+  if(dl){
+    dl.hidden = false;
+    dl.style.top = (to >= drag.rects.length
+      ? drag.rects[drag.rects.length-1].top + drag.rects[drag.rects.length-1].h
+      : drag.rects[to].top) + "px";
+  }
+});
+document.addEventListener("pointerup", ()=>{
+  if(!drag) return;
+  const {from, to} = drag;
+  drag.el.classList.remove("dragging");
+  drag.el.style.transform = "";
+  document.body.classList.remove("dragging-on");
+  drag = null;
+  const dl = $("#dropline"); if(dl) dl.hidden = true;
+  if(moverBloque(from, to)) render();
+});
+document.addEventListener("keydown", e=>{
+  const hit = e.target.closest && e.target.closest("#hits .hit");
+  if(!hit || !e.altKey) return;
+  const i = +hit.dataset.idx;
+  if(e.key === "ArrowUp" || e.key === "ArrowDown"){
+    e.preventDefault();
+    const id = hit.dataset.id;
+    if(moverBloque(i, e.key === "ArrowUp" ? i-1 : i+2)){
+      render();
+      const again = document.querySelector(`#hits .hit[data-id="${id}"]`);
+      if(again) again.focus();
+    }
+  }
+});
+
+function render(){
+  renderStepper(); renderMain(); renderPreview();
+  const db = $("#ditherbar");
+  if(db) db.hidden = !st.logo;
+}
+
+/* carga de imágenes: se decodifica antes de pintar para conocer la proporción */
+function loadImage(slot, src, mode){
+  const img = new Image();
+  img.onload = () => {
+    st[slot] = {src, img, mode: mode || (slot==="logo" ? "line" : "photo")};
+    rasterCache.clear();
+    render();
+  };
+  img.onerror = () => {
+    st[slot] = null;
+    render();
+    alert_inline(`No se ha podido leer esa imagen. Prueba con un PNG, JPG o SVG.`);
+  };
+  img.src = src;
+}
+function alert_inline(msg){
+  const box = document.createElement("div");
+  box.className = "alert bad";
+  box.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:9;max-width:min(420px,92vw)";
+  box.innerHTML = `${ICONS.bad}<div><p>${esc(msg)}</p></div>`;
+  document.body.appendChild(box);
+  setTimeout(()=>box.remove(), 4000);
+}
+
+document.addEventListener("change", e=>{
+  const slot = e.target.dataset.img;
+  if(slot){
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    if(f.size > 4*1024*1024){ alert_inline("La imagen pasa de 4 MB. Reduce el fichero antes de subirlo."); return; }
+    const fr = new FileReader();
+    fr.onload = () => loadImage(slot, fr.result);
+    fr.onerror = () => alert_inline("No se ha podido leer el fichero.");
+    fr.readAsDataURL(f);
+    return;
+  }
+  const ms = e.target.dataset.imgmode;
+  if(ms && st[ms]){ st[ms].mode = e.target.value; rasterCache.clear(); render(); return; }
+  if(e.target.id === "f-dither"){ st.dither = e.target.checked; renderPreview(); return; }
+  const c = e.target.dataset.conn;
+  if(c){
+    ORIGEN[c] = e.target.value.trim();
+    pintarEstadoConexion();
+    if(st.q.trim().length >= 2) lanzarBusqueda();
+  }
+});
+
+function pintarEstadoConexion(){
+  const b = $("#connEstado");
+  if(!b) return;
+  const on = ORIGEN.modo === "api" && !!ORIGEN.base;
+  b.textContent = ORIGEN.modo === "demo" ? "lista local"
+                : on ? "api configurada" : "falta la url";
+  b.classList.toggle("on", on);
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+document.addEventListener("input", e=>{
+  const cn = e.target.dataset.conn;      // los campos de conexión no llevan data-k
+  if(cn){
+    ORIGEN[cn] = e.target.value.trim();
+    pintarEstadoConexion();
+    if(st.q.trim().length >= 2) lanzarBusqueda();
+    return;
+  }
+  const k = e.target.dataset.k;
+  if(!k) return;
+  if(k==="q"){ st.q = e.target.value; lanzarBusqueda(); return; }
+  if(k==="copies") st.copies = Math.max(1, Math.min(9999, parseInt(e.target.value||"1",10)||1));
+  else if(k==="uds") st.uds = e.target.value.replace(/\D/g,"");
+  else st[k] = e.target.value;
+  if(k==="sym"){ render(); return; }
+  if(st.step===0){
+    renderStepper();
+    const b = document.querySelector('[data-go="1"].btn');
+    if(b) b.disabled = !step1Valid();
+    const f = document.querySelector("#f-code");
+    if(f && (k==="code")){
+      const pos = f.selectionStart;
+      const html = view1(); const tmp = document.createElement("div"); tmp.innerHTML = html;
+      document.querySelector("#f-code").parentElement.querySelector(".hint").replaceWith(
+        tmp.querySelector("#f-code").parentElement.querySelector(".hint"));
+      f.setSelectionRange(pos,pos);
+    }
+  }
+  if(st.step===2) renderMain();
+  renderPreview();
+});
+
+function elegirArticulo(a){
+  if(!a) return;
+  st.articulo = a;
+  st.locked = true;
+  st.q = ""; st.resultados = []; st.buscando = false; st.errorBusqueda = null;
+  st.marca = a.marca || "";
+  st.ref   = a.ref;
+  st.desc  = a.desc;
+  st.uds   = a.uds || "";
+  st.code  = a.code;
+  st.sym   = a.sym;
+  st.extra = a.extra || "";
+  st.lote  = "";                 // el lote es de la impresión, no del maestro
+  st.fitScale = 1;
+  render();
+}
+
+document.addEventListener("click", e=>{
+  const b = e.target.closest("button");
+  if(!b) return;
+  if(b.dataset.idx !== undefined && b.classList.contains("res")){ elegirArticulo(st.resultados[+b.dataset.idx]); return; }
+  if(b.dataset.go !== undefined && !b.disabled){
+    const n = +b.dataset.go;
+    if(n>0 && !step1Valid()) return;
+    st.step = n; render(); window.scrollTo({top:0, behavior:"smooth"}); return;
+  }
+  if(b.dataset.grupo){
+    const g = GRUPOS.find(x=>x.id === b.dataset.grupo);
+    // al cambiar de plantilla se coge la medida mayor del grupo, que es la que más admite
+    if(g && !g.sizes.includes(st.sizeId)){ st.sizeId = g.sizes[g.sizes.length-1]; st.fitScale = 1; }
+    render(); return;
+  }
+  if(b.dataset.size){ st.sizeId = b.dataset.size; st.fitScale = 1; render(); return; }
+  if(b.dataset.route){ st.route = b.dataset.route; renderMain(); return; }
+  const a = b.dataset.act;
+  if(a==="unlock"){ st.locked = !st.locked; render(); }
+  if(a==="clear-art"){ st.articulo = null; st.locked = true; st.q = ""; render(); }
+  if(a==="reset-order"){ st.order = ORDEN_INICIAL.slice(); render(); }
+  if(a==="del-logo"){ st.logo = null; rasterCache.clear(); render(); }
+  if(a==="autofit"){ st.fitScale = autoFit() ?? 1; render(); }
+  if(a==="resetfit"){ st.fitScale = 1; render(); }
+  if(a==="rotate"){ st.landscape = !st.landscape; st.fitScale = 1; render(); }
+  if(a==="again"){ st.step = 0; st.route = null; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  if(a==="copy"){
+    const txt = $("#zplOut").textContent;
+    const done = () => { b.textContent = "Copiado"; setTimeout(()=>b.textContent="Copiar", 1600); };
+    try{
+      navigator.clipboard.writeText(txt).then(done).catch(()=>{
+        const r = document.createRange(); r.selectNodeContents($("#zplOut"));
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selecciona y copia";
+      });
+    }catch(_){ b.textContent = "Selecciona y copia"; }
+  }
+});
+
+let rt;
+addEventListener("resize", ()=>{ clearTimeout(rt); rt = setTimeout(renderPreview, 120); });
+["modo","base","token"].forEach(k=>{
+  const el = document.querySelector(`[data-conn="${k}"]`);
+  if(el) el.value = ORIGEN[k];
+});
+document.fonts && document.fonts.ready.then(render);
+render();
+</script>
