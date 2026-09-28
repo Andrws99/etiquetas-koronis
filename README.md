@@ -32,8 +32,9 @@ Flujo de 4 pasos pensado para un operario de almacén con tablet o PC:
 ### Lo que está resuelto de verdad
 
 - **Códigos de barras reales**, codificados a mano y escaneables: EAN-13
-  (con tabla de paridad), ITF-14 (intercalado 2 de 5) y Code 128 (subconjuntos
-  B y C con dígito de control).
+  (con tabla de paridad), ITF-14 (intercalado 2 de 5), Code 128 (subconjuntos
+  B y C con dígito de control) y Code 39 (ratio 2:1, con asteriscos de inicio
+  y fin).
 - **Dígito de control** GTIN calculado y validado al teclear.
 - **Motor de composición en milímetros**: márgenes, saltos de línea, tamaños de
   fuente y ancho de módulo se calculan sobre medidas físicas, no píxeles. Lo que
