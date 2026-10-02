@@ -105,6 +105,7 @@ Devolviendo artículos con esta forma:
   "sym":   "ean13",
   "marca": "newmop",
   "uds":   "12",
+  "lote":  "1123B9110526",
   "extra": "(INCLUYE ASA DE CUERDA)"
 }
 ```
@@ -115,6 +116,36 @@ los nombres reales a `MAPA_CAMPOS` y no hay que tocar nada más.
 
 En la propia aplicación, el desplegable **"Conexión con el ERP"** del final
 permite cambiar el origen y probar sin recompilar.
+
+### Nombres reales en Cosmos
+
+Confirmados a partir del diseñador de plantillas del ERP. Ya están mapeados en
+`MAPA_CAMPOS` y traducidos en la vista SQL, así que no hay que tocar nada:
+
+| Columna en Cosmos | Campo de la etiqueta |
+|---|---|
+| `codigo_art`  | Referencia |
+| `descrip_art` | Descripción |
+| `EAN`         | Código de barras |
+| `lote_art`    | Lote (se precarga, pero sigue siendo editable) |
+| `unidad_art`  | Unidades por caja — **pendiente de confirmar** |
+| `pvp_art`     | Precio. Queda deliberadamente **fuera** de la vista |
+
+Tabla `ARTICULOS`, origen ODBC `puentesql32`.
+
+Dos cosas que hay que resolver antes de programar el backend:
+
+1. **`unidad_art` puede ser la unidad de medida** (UD, KG, M) y no las unidades
+   por caja. Si lo es, hay que buscar la columna real del PCB.
+2. **`puentesql32` es un DSN ODBC de 32 bits, y Node corre en 64.** Un proceso
+   de 64 bits no puede abrir un DSN de 32: son dos registros distintos en
+   Windows. Las tres salidas están explicadas al final de
+   `backend/vistas-erp.sql`. Conviene preguntar primero qué es ese puente: si
+   solo es una capa de compatibilidad sobre un motor estándar, conectando
+   directo al motor desaparece el problema.
+
+El precio se deja fuera a propósito: la etiqueta no lo necesita y no hay razón
+para exponer precios a una aplicación web.
 
 ### Reglas de la conexión
 
@@ -129,14 +160,19 @@ permite cambiar el origen y probar sin recompilar.
 |---|---|
 | Referencia, descripción, EAN, marca, unidades por caja | ERP (solo lectura) |
 | Plantilla, orden de campos, tamaño, logo, imagen | Plataforma |
-| Lote, copias, texto puntual | Cada impresión |
+| Lote | ERP si lo trae, editable en cada impresión |
+| Copias, texto puntual | Cada impresión |
 
 ---
 
 ## Pendiente
 
-- [ ] Motor y credenciales del ERP → ajustar `backend/vistas-erp.sql` y el driver
-      de `backend/route.ts`.
+- [x] Nombres de columna del maestro de artículos → mapeados en `MAPA_CAMPOS` y
+      traducidos en `backend/vistas-erp.sql`.
+- [ ] Confirmar si `unidad_art` son las unidades por caja o la unidad de medida.
+- [ ] Resolver el acceso a `puentesql32` (DSN de 32 bits) y elegir el driver de
+      `backend/route.ts` según el motor real de Cosmos.
+- [ ] Credenciales del usuario de solo lectura.
 - [ ] Pasar el prototipo a Next.js manteniendo `compose()` tal cual: es la pieza
       con más trabajo dentro y es portable sin cambios.
 - [ ] Generación real del PDF (`@react-pdf/renderer` o `pdf-lib`).
@@ -170,3 +206,6 @@ permite cambiar el origen y probar sin recompilar.
   decorativo.
 - Un EAN-13 en una etiqueta de menos de 30 mm de ancho no se lee. La aplicación
   avisa, pero conviene saberlo antes de prometer tamaños al cliente.
+- El precio (`pvp_art`) está fuera de la vista a propósito. Si alguien lo añade
+  para "tenerlo por si acaso", estará exponiendo precios de compra a una
+  aplicación web.
