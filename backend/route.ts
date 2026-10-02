@@ -3,7 +3,13 @@
 // Backend de artículos para la plataforma de etiquetas.
 // Lee del ERP en SOLO LECTURA y devuelve exactamente la forma que espera el frontend.
 //
-// Instalación según el motor de DSPGES (descomenta el que toque):
+// ATENCIÓN antes de programar: el origen que usa Crystal Reports es
+// "puentesql32", un DSN ODBC de 32 bits, y un proceso de 64 bits como Node NO
+// puede abrirlo. Hay que crear un DSN de 64 bits, conectar directamente al
+// motor saltándose el puente, o dejar un servicio de 32 bits intermedio.
+// Ver la nota final de vistas-erp.sql.
+//
+// Instalación según el motor de Cosmos (descomenta el que toque):
 //   SQL Server : npm i mssql
 //   PostgreSQL : npm i pg
 //   Oracle     : npm i oracledb
@@ -12,7 +18,7 @@
 // Variables en .env.local:
 //   ERP_HOST=192.168.1.50
 //   ERP_PORT=1433
-//   ERP_DB=dspges
+//   ERP_DB=cosmos
 //   ERP_USER=etiquetas_ro          <- usuario de SOLO LECTURA, ver vistas-erp.sql
 //   ERP_PASS=...
 //   API_TOKEN=un-token-largo-y-aleatorio
@@ -31,6 +37,7 @@ export type Articulo = {
   sym: "ean13" | "itf14" | "code128";
   marca?: string;
   uds?: string;
+  lote?: string;
   extra?: string;
 };
 
@@ -59,6 +66,9 @@ async function getPool() {
 function aArticulo(row: Record<string, unknown>): Articulo | null {
   const s = (v: unknown) => (v == null ? "" : String(v).trim());
 
+  // La vista v_etiquetas_articulos ya traduce de Cosmos:
+  //   codigo_art -> referencia · descrip_art -> descripcion · EAN -> ean
+  //   lote_art -> lote · unidad_art -> unidades_caja
   const ref = s(row.referencia);
   const desc = s(row.descripcion);
   const code = s(row.ean);
@@ -78,6 +88,7 @@ function aArticulo(row: Record<string, unknown>): Articulo | null {
     sym,
     marca: s(row.marca) || undefined,
     uds: s(row.unidades_caja) || undefined,
+    lote: s(row.lote) || undefined,
     extra: s(row.texto_etiqueta) || undefined,
   };
 }
@@ -111,7 +122,7 @@ export async function GET(req: NextRequest) {
       .input("limit", sql.Int, limit)
       .query(`
         SELECT TOP (@limit)
-               referencia, descripcion, ean, marca, unidades_caja, texto_etiqueta
+               referencia, descripcion, ean, lote, marca, unidades_caja, texto_etiqueta
         FROM   dbo.v_etiquetas_articulos
         WHERE  ean = @exacto                 -- primero la lectura de pistola
            OR  referencia LIKE @q
