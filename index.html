@@ -531,6 +531,7 @@ GET  {base}/articulos/&lt;referencia&gt;        → { ... }</pre>
   "sym":   "ean13",             // ean13|itf14|code128|code39 opcional
   "marca": "newmop",            //                          opcional
   "uds":   "12",                // unidades por caja        opcional
+  "lote":  "1123B9110526",      // si el maestro lo trae    opcional
   "extra": "(INCLUYE ASA)"      // texto fijo del artículo  opcional
 }</pre>
       </div>
@@ -619,6 +620,7 @@ const st = {
        "sym":  "ean13",                 // ean13 | itf14 | code128 | code39 (opcional)
        "marca":"newmop",                // opcional
        "uds":  "12",                    // unidades por caja       (opcional)
+       "lote": "1123B9110526",          // si el maestro lo trae   (opcional)
        "extra":"(INCLUYE ASA)" }        // texto fijo del artículo (opcional)
 
    Si tus columnas se llaman de otra forma, no toques el resto del código:
@@ -631,14 +633,20 @@ const ORIGEN = {
 };
 
 /* Nombres de columna del ERP -> campos internos. Varios alias por campo:
-   se coge el primero que venga informado. */
+   se coge el primero que venga informado.
+   Los nombres en MAYÚSCULAS del comentario son los reales de la tabla ARTICULOS
+   de Cosmos, confirmados en el diseñador de plantillas. */
 const MAPA_CAMPOS = {
-  ref:   ["ref", "referencia", "codigo_articulo", "cod_art", "articulo"],
-  desc:  ["desc", "descripcion", "nombre", "denominacion"],
+  ref:   ["ref", "codigo_art", "referencia", "codigo_articulo", "cod_art", "articulo"],
+  desc:  ["desc", "descrip_art", "descripcion", "nombre", "denominacion"],
   code:  ["code", "ean", "ean13", "codigo_barras", "gtin"],
   sym:   ["sym", "tipo_codigo", "simbologia"],
   marca: ["marca", "fabricante", "brand"],
-  uds:   ["uds", "unidades_caja", "pcb", "uds_caja"],
+  // OJO: unidad_art podría ser la unidad de medida (UD, KG, M) y no las unidades
+  // por caja. Confirmar antes de darlo por bueno; si es la unidad de medida, se
+  // quita de aquí y se busca la columna real del PCB.
+  uds:   ["uds", "unidad_art", "unidades_caja", "pcb", "uds_caja"],
+  lote:  ["lote", "lote_art", "numero_lote"],
   extra: ["extra", "texto_etiqueta", "observaciones"]
 };
 
@@ -1690,7 +1698,7 @@ function elegirArticulo(a){
   st.code  = a.code;
   st.sym   = a.sym;
   st.extra = a.extra || "";
-  st.lote  = "";                 // el lote es de la impresión, no del maestro
+  st.lote  = a.lote || "";       // si el ERP lo trae se precarga, pero queda editable
   st.fitScale = 1;
   render();
 }
