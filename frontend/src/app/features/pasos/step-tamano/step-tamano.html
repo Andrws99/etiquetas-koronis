@@ -1,0 +1,34 @@
+<div class="panel">
+  <div class="panel-head"><h2>Plantilla</h2><p>Tres plantillas en vez de seis medidas. La misma se recompone sola al tamaño del rollo.</p></div>
+  <div class="panel-body">
+    <div class="sizes">
+      @for (g of grupos; track g.id) {
+        <button class="size" type="button" [attr.aria-pressed]="g.id === actual().id" (click)="elegirGrupo(g)">
+          <span class="shape"><i [style.width.px]="forma(g).w" [style.height.px]="forma(g).h"></i></span>
+          <span><span class="dims">{{ g.nm }}</span>
+          <span class="nm">{{ medidas(g) }}</span>
+          <span class="note">{{ g.note }}</span></span>
+        </button>
+      }
+    </div>
+
+    @if (actual().sizes.length > 1) {
+      <div class="rollo">
+        <span class="rollo-lbl">Rollo cargado en la impresora</span>
+        <div class="rollo-chips">
+          @for (id of actual().sizes; track id) {
+            <button class="chip" type="button" [attr.aria-pressed]="store.state().sizeId === id" (click)="elegirTamanyo(id)">
+              {{ id.split('x')[0] }} × {{ id.split('x')[1] }} mm
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="nav">
+      <button class="btn btn-ghost" (click)="store.irAPaso(0)">← Atrás</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" (click)="store.irAPaso(2)">Previsualizar →</button>
+    </div>
+  </div>
+</div>

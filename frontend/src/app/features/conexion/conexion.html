@@ -1,0 +1,55 @@
+<details class="conn">
+  <summary>Conexión con el ERP <span class="estado" [class.on]="estado().on">{{ estado().txt }}</span></summary>
+  <div class="conn-body">
+    <p>Toda la aplicación pide los artículos a un solo objeto. Cambia el origen aquí, o
+    directamente en la constante <code>ORIGEN</code> del código, y el resto sigue igual.</p>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="c-modo">Origen de datos</label>
+        <select id="c-modo" [value]="origen.modo" (change)="set('modo', $event)">
+          <option value="demo">Lista local (sin backend)</option>
+          <option value="api">API del ERP</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="c-base">URL base del backend</label>
+        <input id="c-base" class="mono" [value]="origen.base" (input)="set('base', $event)"
+               placeholder="https://etiquetas.tuservidor.com/api">
+      </div>
+      <div class="field span">
+        <label for="c-token">Token Bearer <span class="opt">opcional</span></label>
+        <input id="c-token" class="mono" [value]="origen.token" (input)="set('token', $event)"
+               placeholder="se manda en la cabecera Authorization">
+      </div>
+    </div>
+
+    <h4>Rutas que tiene que servir el backend</h4>
+    <div class="codewrap">
+      <pre>GET  &#123;base&#125;/articulos?q=&lt;texto&gt;&amp;limit=8   → [ &#123;...&#125;, &#123;...&#125; ]
+GET  &#123;base&#125;/articulos/&lt;referencia&gt;        → &#123; ... &#125;</pre>
+    </div>
+
+    <h4>Forma de cada artículo</h4>
+    <div class="codewrap">
+      <pre>&#123;
+  "ref":   "500600",            // referencia del maestro   OBLIGATORIO
+  "desc":  "PLUMERO EXTENSIBLE",// descripción              OBLIGATORIO
+  "code":  "8436025811529",     // EAN-13 o GTIN-14         OBLIGATORIO
+  "sym":   "ean13",             // ean13|itf14|code128|code39 opcional
+  "marca": "newmop",            //                          opcional
+  "uds":   "12",                // unidades por caja        opcional
+  "lote":  "1123B9110526",      // si el maestro lo trae    opcional
+  "extra": "(INCLUYE ASA)"      // texto fijo del artículo  opcional
+&#125;</pre>
+    </div>
+    <p class="margen-superior">Si las columnas del ERP se llaman de otra forma, no hay que tocar nada más:
+    se añaden los nombres reales a <code>MAPA_CAMPOS</code> y se traducen solos. Si el ERP no manda
+    <code>sym</code>, se deduce por la longitud del código.</p>
+
+    <h4>Lo que la plataforma nunca escribe</h4>
+    <p class="margen-cero">El ERP se consulta en solo lectura. La plantilla, el orden de los campos, el tamaño,
+    el logo y la imagen viven en la plataforma enlazados por referencia. El lote y las copias
+    son de cada impresión y no vuelven al maestro.</p>
+  </div>
+</details>

@@ -11,8 +11,23 @@ backend y la impresión efectiva.
 
 ## Cómo verlo
 
-Abre `index.html` en el navegador. No hay que compilar ni instalar nada: es un
-único fichero sin dependencias externas más allá de las fuentes de Google.
+Dos formas:
+
+- **Prototipo de referencia**: abre `index.html`. Un único fichero sin compilar.
+  Es la versión original: se queda aquí como referencia de comportamiento.
+- **Aplicación**: `frontend/` es la misma aplicación en Angular + TypeScript,
+  partida en componentes y con tests.
+
+```bash
+cd frontend
+npm install
+npm start          # http://localhost:4200
+npm test           # vitest (28 tests: motor, códigos de barras, componentes)
+npm run build
+```
+
+El motor (composición, códigos de barras, SVG y ZPL) vive en `frontend/src/app/core/`
+y no depende de Angular: se puede llevar a otro front sin cambios.
 
 ---
 
@@ -53,32 +68,45 @@ Flujo de 4 pasos pensado para un operario de almacén con tablet o PC:
 ## Estructura
 
 ```
-index.html                  La aplicación entera
+index.html                  Prototipo original (referencia, no se toca)
 backend/route.ts            Endpoint Next.js de artículos (pendiente de conectar)
 backend/vistas-erp.sql      Vista, índices y usuario de solo lectura para el ERP
+frontend/                   Aplicación Angular
+  src/styles.css            Tokens, modo oscuro y primitivas compartidas
+  src/app/
+    core/                   Motor portable (sin Angular)
+      barcode/              symbols, tables, encode → EAN/ITF/128/39
+      data/                 origen, mapa-campos, seed-demo, normaliza, erp
+      label/                sizes, compose, svg, zpl, raster, nombres
+    state/                  EtiquetaStore (signals) y CatalogoService (búsqueda)
+    shared/                 alert, stepper
+    features/
+      pasos/                step-datos, step-tamano, step-comprobar, step-imprimir
+      preview/              vista previa, arrastre y reordenado de campos
+      conexion/             panel "Conexión con el ERP"
 ```
 
 ### Puntos del código que importan
 
-Dentro de `index.html`, por orden de aparición:
-
 | Zona | Qué hace |
 |---|---|
-| `ORIGEN` | **El único sitio que hay que tocar para conectar el ERP.** |
-| `MAPA_CAMPOS` | Traduce nombres de columna del ERP a campos internos. |
-| `SEED_DEMO` | Lista local de relleno. Se borra al conectar el backend. |
-| `ERP` | La aplicación solo pide artículos aquí. Nada más sabe de dónde salen. |
-| `GRUPOS` | Las tres plantillas y las medidas que cubre cada una. |
-| `rasterize()` | Convierte el logo a 1 bit con tramado. |
-| `compose()` | El motor. Calcula toda la etiqueta en milímetros. |
-| `svgLabel()` | Dibuja. |
-| `zpl()` | Genera el comando para la impresora térmica. |
+| `core/data/origen.ts` | **El único sitio que hay que tocar para conectar el ERP.** |
+| `core/data/mapa-campos.ts` | Traduce nombres de columna del ERP a campos internos. |
+| `core/data/seed-demo.ts` | Lista local de relleno. Se borra al conectar el backend. |
+| `core/data/erp.ts` | La aplicación solo pide artículos aquí. Nada más sabe de dónde salen. |
+| `core/label/sizes.ts` | Las tres plantillas y las medidas que cubre cada una. |
+| `core/label/raster.ts` | Convierte el logo a 1 bit con tramado. |
+| `core/label/compose.ts` | El motor. Calcula toda la etiqueta en milímetros. |
+| `core/label/svg.ts` | Dibuja. |
+| `core/label/zpl.ts` | Genera el comando para la impresora térmica. |
+| `state/etiqueta.store.ts` | Todo el estado de la etiqueta en curso (signals). |
 
 ---
 
 ## Conectar el ERP
 
-La plataforma habla con un solo objeto. Para conectarla:
+La plataforma habla con un solo objeto (`frontend/src/app/core/data/origen.ts`).
+Para conectarla:
 
 ```js
 const ORIGEN = {
@@ -173,8 +201,10 @@ para exponer precios a una aplicación web.
 - [ ] Resolver el acceso a `puentesql32` (DSN de 32 bits) y elegir el driver de
       `backend/route.ts` según el motor real de Cosmos.
 - [ ] Credenciales del usuario de solo lectura.
-- [ ] Pasar el prototipo a Next.js manteniendo `compose()` tal cual: es la pieza
-      con más trabajo dentro y es portable sin cambios.
+- [x] Prototipo → Angular + TypeScript en `frontend/`, partida en componentes,
+      con `compose()` intacto y 28 tests (motor, códigos de barras, componentes).
+- [ ] Backend de artículos: las rutas de `GET {base}/articulos` siguen sin
+      servirse (`backend/route.ts` es el borrador Next.js pendiente de decidir).
 - [ ] Generación real del PDF (`@react-pdf/renderer` o `pdf-lib`).
 - [ ] Envío a impresora térmica. **Ojo:** una app desplegada en Vercel no puede
       hablar con una impresora USB ni con una IP de la red local. Hace falta un
@@ -189,6 +219,10 @@ para exponer precios a una aplicación web.
 
 - **Next.js** en vez de Java + Jaspersoft: mucho menos peso para un caso de uso
   simple.
+- **Angular + TypeScript** en el front (en `frontend/`), con estilos
+  encapsulados por componente y un `core/` sin dependencias de Angular. El
+  prototipo `index.html` se queda intacto como referencia de comportamiento:
+  cualquier cambio se contrasta contra él.
 - **Reordenar campos, no posicionarlos libremente.** La posición libre obliga a
   guías de alineación, control de solapamientos y redimensionado, y rompe el
   ajuste automático. Se deja para una fase 2 si el cliente la pide.

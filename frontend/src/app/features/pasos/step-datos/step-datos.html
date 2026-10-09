@@ -1,0 +1,63 @@
+<div class="panel">
+  <div class="panel-head"><h2>Datos de la etiqueta</h2><p>Busca el artículo o rellena los campos a mano.</p></div>
+  <div class="panel-body">
+
+    <app-article-search/>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="f-marca">Marca <span class="opt">opcional</span>
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <input id="f-marca" [value]="store.state().marca" (input)="set('marca', $event)" placeholder="newmop" [readonly]="ro()">
+      </div>
+      <div class="field">
+        <label for="f-ref">Referencia <span class="opt">opcional</span>
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <input id="f-ref" class="mono" [value]="store.state().ref" (input)="set('ref', $event)" placeholder="500600" [readonly]="ro()">
+      </div>
+      <div class="field span">
+        <label for="f-desc">Descripción <span class="req">obligatorio</span>
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <textarea id="f-desc" [value]="store.state().desc" (input)="set('desc', $event)"
+                  placeholder="PLUMERO AVESTRUZ MAXI EXTENSIBLE" [readonly]="ro()"></textarea>
+        <span class="hint">Se reparte en 3 líneas como máximo.</span>
+      </div>
+      <div class="field">
+        <label for="f-uds">Unidades por caja <span class="opt">opcional</span>
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <input id="f-uds" class="mono" [value]="store.state().uds" (input)="set('uds', $event)" inputmode="numeric" placeholder="72" [readonly]="ro()">
+      </div>
+      <div class="field">
+        <label for="f-lote">Lote <span class="opt">de esta impresión</span></label>
+        <input id="f-lote" class="mono" [value]="store.state().lote" (input)="set('lote', $event)" placeholder="1123B9110526">
+      </div>
+      <div class="field span">
+        <label for="f-extra">Texto adicional <span class="opt">opcional</span></label>
+        <input id="f-extra" [value]="store.state().extra" (input)="set('extra', $event)" placeholder="(INCLUYE ASA DE CUERDA)">
+      </div>
+      <div class="field">
+        <label for="f-code">Código de barras <span class="req">obligatorio</span>
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <input id="f-code" class="mono" [value]="store.state().code" (input)="set('code', $event)" placeholder="8436025811529" [readonly]="ro()">
+        <span [class]="store.pistaCodigo().cls">{{ store.pistaCodigo().txt }}</span>
+      </div>
+      <div class="field">
+        <label for="f-sym">Tipo de código
+          @if (ro()) { <span class="lock" title="Viene del ERP">ERP</span> }</label>
+        <select id="f-sym" (change)="set('sym', $event)" [disabled]="ro()">
+          @for (s of simbologias; track s) {
+            <option [value]="s" [selected]="store.state().sym === s">{{ syms[s].nm }}</option>
+          }
+        </select>
+        <span class="hint">EAN-13 = unidad · ITF-14 = caja</span>
+      </div>
+    </div>
+
+    <app-logo-upload/>
+
+    <div class="nav">
+      <span class="spacer"></span>
+      <button class="btn btn-primary" [disabled]="!store.step1Valid()" (click)="store.irAPaso(1)">Elegir tamaño →</button>
+    </div>
+  </div>
+</div>

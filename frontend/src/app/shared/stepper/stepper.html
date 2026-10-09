@@ -1,0 +1,12 @@
+<nav class="stepper" aria-label="Pasos">
+  @for (t of pasos; track t; let i = $index) {
+    <button
+      [attr.aria-current]="i === store.state().step ? 'true' : null"
+      [class.done]="i < store.state().step"
+      [disabled]="i > 0 && !store.step1Valid()"
+      (click)="ir(i)">
+      <span class="n">{{ i < store.state().step ? '✓' : i + 1 }}</span>
+      <span class="t">{{ t }}</span>
+    </button>
+  }
+</nav>

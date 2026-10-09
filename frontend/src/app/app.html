@@ -1,0 +1,36 @@
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+          <rect x="1" y="3" width="1.6" height="11" fill="#fff"/><rect x="4" y="3" width="1" height="11" fill="#fff"/>
+          <rect x="6.6" y="3" width="2.2" height="11" fill="#fff"/><rect x="10.2" y="3" width="1" height="11" fill="#fff"/>
+          <rect x="12.4" y="3" width="1.6" height="11" fill="#fff"/><rect x="15.2" y="3" width="1" height="11" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Generador de Etiquetas</h1>
+        <p>Rellena, elige tamaño, comprueba y saca la etiqueta</p>
+      </div>
+    </div>
+    <span class="demo-flag">Prototipo · datos de ejemplo</span>
+  </div>
+
+  <app-stepper/>
+
+  <div class="cols">
+    <main>
+      @switch (store.state().step) {
+        @case (0) { <app-step-datos/> }
+        @case (1) { <app-step-tamano/> }
+        @case (2) { <app-step-comprobar/> }
+        @case (3) { <app-step-imprimir/> }
+      }
+    </main>
+    <aside class="previewCol">
+      <app-preview/>
+    </aside>
+  </div>
+
+  <app-conexion/>
+</div>

@@ -1,0 +1,46 @@
+<div class="panel">
+  <div class="panel-head"><h2>Imprimir</h2><p>Revisa el resumen y elige por dónde sale.</p></div>
+  <div class="panel-body">
+    <dl class="summary">
+      @for (f of filas; track f[0]) {
+        <div><dt>{{ f[0] }}</dt><dd>{{ f[1] }}</dd></div>
+      }
+    </dl>
+
+    <div class="routes">
+      <button class="route" type="button" [attr.aria-pressed]="st().route === 'pdf'" (click)="ruta('pdf')">
+        <h3>Descargar PDF</h3>
+        <p>Medida exacta, cualquier impresora. Un clic más: el diálogo del navegador.</p>
+        <span class="tag">impresora normal</span>
+      </button>
+      <button class="route" type="button" [attr.aria-pressed]="st().route === 'zpl'" (click)="ruta('zpl')">
+        <h3>Enviar a térmica</h3>
+        <p>Comando ZPL directo. Barras nítidas y nada de diálogos.</p>
+        <span class="tag">zebra · tsc</span>
+      </button>
+    </div>
+
+    @if (st().route === 'pdf') {
+      <app-alert nivel="info" titulo="PDF a medida exacta" class="margen-superior">
+        Se genera un PDF de {{ medidas().w }} × {{ medidas().h }} mm, una página por copia, y se abre el diálogo de impresión.
+        Vale para cualquier impresora. En la aplicación final lo monta <code>@react-pdf/renderer</code> en el servidor.
+      </app-alert>
+    }
+    @if (st().route === 'zpl') {
+      <div class="codewrap">
+        <header><span>ZPL generado · 203 dpi</span>
+          <button class="btn btn-ghost btn-small" type="button" (click)="copiar($event)">Copiar</button></header>
+        <pre #zplOut>{{ textoZpl() }}</pre>
+      </div>
+      <app-alert nivel="info" titulo="Esto es lo que recibe la impresora" class="margen-corto">
+        Se manda tal cual al puerto 9100 de la Zebra, o al agente local del puesto. Sin PDF y sin diálogo: sale la etiqueta.
+      </app-alert>
+    }
+
+    <div class="nav">
+      <button class="btn btn-ghost" (click)="store.irAPaso(2)">← Atrás</button>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" (click)="store.otraVez()">Imprimir otra etiqueta</button>
+    </div>
+  </div>
+</div>

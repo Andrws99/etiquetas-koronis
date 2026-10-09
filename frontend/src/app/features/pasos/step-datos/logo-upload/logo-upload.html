@@ -1,0 +1,22 @@
+<div class="imgsec">
+  <h3>Logo de marca <span>opcional · se imprime arriba y se puede arrastrar</span></h3>
+  <div class="logowrap">
+    <div class="slot">
+      @if (store.state().logo; as logo) {
+        <div class="slot-top">
+          <span class="slot-nm">Logo cargado</span>
+          <button class="btn btn-ghost btn-small" type="button" (click)="store.setLogo(null)">Quitar</button>
+        </div>
+        <div class="thumb"><img [src]="logo.src" alt="Logo cargado"></div>
+        <label class="mini" for="m-logo">Tipo de original</label>
+        <select id="m-logo" [value]="logo.mode" (change)="onMode($event)">
+          <option value="line" [selected]="logo.mode === 'line'">Logo o dibujo (blanco y negro)</option>
+          <option value="photo" [selected]="logo.mode === 'photo'">Foto (tramada)</option>
+        </select>
+      } @else {
+        <label class="drop" for="f-logo">Subir PNG, JPG o SVG<em>Para un logo, SVG o PNG con fondo transparente</em></label>
+      }
+      <input type="file" id="f-logo" accept="image/*" class="vh" (change)="onFile($event)">
+    </div>
+  </div>
+</div>

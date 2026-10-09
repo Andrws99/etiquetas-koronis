@@ -1,0 +1,6 @@
+/* primitivas (.summary, .routes, .route, .codewrap, pre) en styles.css */
+:host{display:block}
+
+/* los márgenes que en el prototipo iban inline */
+.margen-superior{margin-top:16px}
+.margen-corto{margin-top:12px}

@@ -1,0 +1,42 @@
+<div class="panel">
+  <div class="stage">
+    <div class="labelBox" #labelBox [style.width.px]="vista().width">
+      <div class="svgBox" [innerHTML]="vista().svg"></div>
+      <div class="hits">
+        @for (z of vista().zonas; track z.id) {
+          <button class="hit" type="button"
+                  [attr.data-idx]="z.idx" [attr.data-id]="z.id"
+                  [style.top.px]="z.top" [style.height.px]="z.height"
+                  [attr.aria-label]="z.nombre + '. Arrastra o usa Alt y flechas para moverlo.'">
+            <span class="hit-tag">{{ z.nombre }}</span>
+          </button>
+        }
+        <div class="dropline" #dropline hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-meta">
+    <span [innerHTML]="metaTam"></span>
+    <span [innerHTML]="metaModulo"></span>
+  </div>
+
+  <div class="draghint">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M8 1.5 10 4H6l2-2.5ZM8 14.5 6 12h4l-2 2.5ZM1.5 8 4 6v4L1.5 8ZM14.5 8 12 10V6l2.5 2Z" fill="currentColor"/>
+      <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
+    </svg>
+    Arrastra los campos para cambiar el orden
+    <button class="btn btn-ghost btn-small" type="button" [hidden]="!ordenModificado" (click)="store.resetOrder()">Orden original</button>
+  </div>
+
+  <div class="ditherbar" [hidden]="!st().logo">
+    <input type="checkbox" id="f-dither" [checked]="st().dither" (change)="setDither($event)">
+    <label for="f-dither">Ver como lo imprime la térmica (1 bit)</label>
+  </div>
+</div>
+
+<div class="foot">
+  Vista previa a escala. El módulo de código de barras se calcula en milímetros reales,
+  así que lo que ves es lo que sale por la impresora.
+</div>

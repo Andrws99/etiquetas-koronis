@@ -1,0 +1,48 @@
+<div class="src">
+  <div class="src-head">
+    <span class="src-nm">Artículo</span>
+    <span class="src-pill">catálogo de ejemplo · simula el ERP</span>
+  </div>
+
+  @if (store.state().articulo; as art) {
+    <div class="chosen">
+      <div>
+        <span class="chosen-ref">{{ art.ref }}</span>
+        <span class="chosen-desc">{{ art.desc }}</span>
+      </div>
+      <div class="chosen-acts">
+        <button class="btn btn-ghost btn-small" (click)="store.toggleLock()">
+          {{ store.state().locked ? 'Desbloquear' : 'Bloquear' }}
+        </button>
+        <button class="btn btn-ghost btn-small" (click)="store.cambiarArticulo()">Cambiar</button>
+      </div>
+    </div>
+    @if (store.state().locked) {
+      <p class="src-note">Los campos del maestro llegan rellenos y bloqueados. El lote, el texto adicional y las copias sí son de esta impresión.</p>
+    } @else {
+      <p class="src-note warn">Editando sobre el artículo. El cambio vale solo para esta etiqueta, no vuelve al ERP.</p>
+    }
+  } @else {
+    <input id="f-q" class="mono" [value]="store.state().q" (input)="onQ($event)"
+           placeholder="Referencia, descripción o escanea el código" autocomplete="off">
+    <div class="results">
+      @if (store.state().buscando) {
+        <p class="results-empty"><span class="spin"></span> Consultando el catálogo…</p>
+      } @else if (store.state().errorBusqueda) {
+        <p class="results-empty err">{{ store.state().errorBusqueda }} Puedes rellenar los campos a mano.</p>
+      } @else if (store.state().q.trim().length < 2) {
+        <p class="results-empty">Escribe dos letras, la referencia, o escanea el código. Déjalo en blanco para rellenar a mano.</p>
+      } @else if (store.state().resultados.length === 0) {
+        <p class="results-empty">Ningún artículo coincide con “{{ store.state().q.trim() }}”.</p>
+      } @else {
+        @for (a of store.state().resultados; track a.ref + a.code; let i = $index) {
+          <button class="res" type="button" (click)="elegir(i)">
+            <span class="res-ref">{{ a.ref }}</span>
+            <span class="res-desc">{{ a.desc }}</span>
+            <span class="res-code">{{ a.code }}</span>
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

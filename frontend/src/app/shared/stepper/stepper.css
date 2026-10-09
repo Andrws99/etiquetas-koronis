@@ -1,0 +1,32 @@
+:host { display: block; }
+
+.stepper {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+  background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin-bottom: 22px;
+}
+.stepper button {
+  appearance: none; border: 0; background: var(--surface); color: var(--ink-3);
+  font-family: "Archivo", sans-serif; font-weight: 600; font-size: 12.5px;
+  padding: 10px 8px 11px; display: flex; align-items: center; gap: 8px; justify-content: center;
+  cursor: pointer; transition: background .15s, color .15s; text-align: left; min-width: 0;
+}
+.stepper button:disabled { cursor: not-allowed; opacity: .55; }
+.stepper button .n {
+  font-family: "IBM Plex Mono", monospace; font-size: 11px; width: 19px; height: 19px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--surface-2); color: var(--ink-3); flex: none;
+  border: 1px solid var(--line);
+}
+.stepper button .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stepper button[aria-current="true"] { background: var(--accent-soft); color: var(--accent-ink); }
+.stepper button[aria-current="true"] .n { background: var(--accent); color: #fff; border-color: var(--accent); }
+.stepper button.done { color: var(--ink-2); }
+.stepper button.done .n {
+  background: var(--good-soft); color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 35%, transparent);
+}
+
+@media (max-width: 640px) {
+  .stepper { grid-template-columns: repeat(4, 1fr); }
+  .stepper button .t { display: none; }
+  .stepper button { padding: 11px 4px; }
+}

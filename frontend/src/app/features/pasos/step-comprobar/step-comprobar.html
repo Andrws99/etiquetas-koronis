@@ -1,0 +1,46 @@
+<div class="panel">
+  <div class="panel-head"><h2>Comprobación</h2><p>Se valida que el contenido del paso 1 quepa en el tamaño del paso 2.</p></div>
+  <div class="panel-body">
+    <div class="alerts">
+      @if (etiqueta().issues.length === 0) {
+        <app-alert nivel="good" titulo="Todo cabe">
+          El contenido entra en {{ medidas().w }} × {{ medidas().h }} mm y el código queda en medida legible.
+        </app-alert>
+      } @else {
+        @for (i of etiqueta().issues; track i.k) {
+          <app-alert [nivel]="i.lvl" [titulo]="i.lvl === 'bad' ? 'No se puede imprimir así' : 'Revisa esto'">
+            {{ i.msg }}
+          </app-alert>
+        }
+      }
+    </div>
+
+    <div class="fixes">
+      @if (canFit()) {
+        <button class="btn btn-ghost btn-small" (click)="store.autofit()">Ajustar automáticamente</button>
+      }
+      @if (st().fitScale !== 1) {
+        <button class="btn btn-ghost btn-small" (click)="store.resetFit()">Quitar el ajuste (texto al {{ fitPercent }}%)</button>
+      }
+      <button class="btn btn-ghost btn-small" (click)="store.girar()">Girar a {{ medidas().h }} × {{ medidas().w }} mm</button>
+      <button class="btn btn-ghost btn-small" (click)="store.irAPaso(1)">Cambiar de tamaño</button>
+    </div>
+
+    <div class="grid2" style="margin-top:18px">
+      <div class="field">
+        <label for="f-copies">Número de copias</label>
+        <input id="f-copies" class="mono" [value]="st().copies" (input)="setCopies($event)" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="f-medida">Medida final</label>
+        <input id="f-medida" class="mono" [value]="medidaFinal" readonly tabindex="-1">
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-ghost" (click)="store.irAPaso(1)">← Atrás</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" (click)="store.irAPaso(3)">Continuar a imprimir →</button>
+    </div>
+  </div>
+</div>
